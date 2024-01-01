@@ -1,0 +1,25 @@
+.header-container {
+  height: 56px;
+  width: 100%;
+  background: #1E2228;
+  border-bottom: 1px solid #5D656D;
+  display: flex;
+  align-items: center;
+}
+
+.search-input {
+  margin-left: 2rem;
+  width: 60%;
+  padding: 0.6em 1.2em;
+  font-size: 1.2em;
+  font-weight: 300;
+  font-family: inherit;
+  color: white;
+  background: transparent;
+  transition: border-color 0.25s;
+}
+
+.search-input::placeholder {
+  color: #525151;
+  font-size: 1em;
+}
