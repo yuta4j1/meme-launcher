@@ -50,7 +50,6 @@
   top: 10%;
   left: 20%;
   border-radius: 8px;
-  padding: 16px 32px 24px 32px;
   color: #fff;
   background: #202439;
   width: 600px;
@@ -86,10 +85,14 @@
   cursor: pointer;
 }
 
+.modal-header {
+  padding: 16px 32px 0px 32px;
+}
+
 .modal-footer {
   display: flex;
   justify-content: end;
-  padding: 8px 0;
+  padding: 16px 32px 24px 32px;
 }
 
 .modal-footer-button-container {
@@ -118,4 +121,28 @@
 
 .upload-button-text {
   margin-left: 8px;
+}
+
+.scrollabel-area {
+  padding: 0px 32px;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.scrollabel-area::-webkit-scrollbar {
+  -webkit-appearance: none;
+}
+
+.scrollabel-area::-webkit-scrollbar:vertical {
+  width: 5px;
+}
+
+.scrollabel-area::-webkit-scrollbar:horizontal {
+  height: 5px;
+}
+
+.scrollabel-area::-webkit-scrollbar-thumb {
+  border-radius: 8px;
+  background-color: #fff;
+  opacity: 0.5;
 }

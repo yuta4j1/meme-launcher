@@ -43,11 +43,13 @@ export function Header() {
           <Dialog.Portal>
             <Dialog.Overlay className="modal-overlay" />
             <Dialog.Content className="modal-content">
-              <Dialog.Title>Upload your meme</Dialog.Title>
-              <Dialog.Description>
-                If you have images you would like to add to the list, you can
-                upload them here.
-              </Dialog.Description>
+              <div className="modal-header">
+                <Dialog.Title>Upload your meme</Dialog.Title>
+                <Dialog.Description>
+                  If you have images you would like to add to the list, you can
+                  upload them here.
+                </Dialog.Description>
+              </div>
               <input
                 type="file"
                 style={{ display: "none" }}
@@ -59,28 +61,33 @@ export function Header() {
                   }
                 }}
               />
-              <div className="upload-container">
-                <div
-                  className="droppable-area"
-                  onDragOver={(e) => {
-                    e.preventDefault();
-                  }}
-                  onDrop={(e) => {
-                    e.preventDefault();
-                    const files = e.dataTransfer.files;
-                    setUploadFile(files.item(0));
-                  }}
-                  onClick={() => {
-                    /** TODO: a11y check */
-                    fileRef.current?.click();
-                  }}
-                >
-                  {uploadFile === null &&
-                    "ファイルをドラッグ&ドロップしてください"}
-                  {uploadFile !== null && uploadFileUrl !== null && (
-                    <img src={uploadFileUrl} width="500" height="300" />
-                  )}
+              <div className="scrollabel-area">
+                <div className="upload-container">
+                  <div
+                    className="droppable-area"
+                    onDragOver={(e) => {
+                      e.preventDefault();
+                    }}
+                    onDrop={(e) => {
+                      e.preventDefault();
+                      const files = e.dataTransfer.files;
+                      setUploadFile(files.item(0));
+                    }}
+                    onClick={() => {
+                      /** TODO: a11y check */
+                      fileRef.current?.click();
+                    }}
+                  >
+                    {uploadFile === null &&
+                      "ファイルをドラッグ&ドロップしてください"}
+                    {uploadFile !== null && uploadFileUrl !== null && (
+                      <img src={uploadFileUrl} width="500" height="300" />
+                    )}
+                  </div>
                 </div>
+                <section>
+                  <h2>Tag or Keyword</h2>
+                </section>
               </div>
               <div style={{ height: "16px" }}></div>
               <div className="modal-footer">
