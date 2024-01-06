@@ -30,7 +30,9 @@ export const UploadModal: FC<{ open: boolean; onClose: () => void }> = ({
     <Dialog.Root
       open={open}
       onOpenChange={() => {
+        // ステートの初期化
         setUploadFile(null);
+        setKeywords([{ id: keywordIdGen(), value: "" }]);
         onClose();
       }}
     >
