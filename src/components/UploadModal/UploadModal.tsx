@@ -1,15 +1,7 @@
 import { FC, useState, useRef, useMemo } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
-import * as Select from "@radix-ui/react-select";
 import { IoCloudUploadOutline } from "react-icons/io5";
-import {
-  CheckIcon,
-  ChevronDownIcon,
-  ChevronUpIcon,
-} from "@radix-ui/react-icons";
-import useSWR from "swr";
-import { getRequest } from "../../api";
-import type { CategoriesResponse } from "../../types/category";
+import CategorySelector from "../CategorySelector";
 import { keywordIdGen } from "../../util/random";
 import { RxCross1 } from "react-icons/rx";
 import { FiPlus } from "react-icons/fi";
@@ -20,6 +12,8 @@ type Keyword = {
   value: string;
 };
 
+type CategoryId = string;
+
 export const UploadModal: FC<{ open: boolean; onClose: () => void }> = ({
   open,
   onClose,
@@ -29,18 +23,7 @@ export const UploadModal: FC<{ open: boolean; onClose: () => void }> = ({
   const [keywords, setKeywords] = useState<Keyword[]>([
     { id: keywordIdGen(), value: "" },
   ]);
-
-  const { data, isLoading, error } = useSWR<CategoriesResponse>(
-    "/categories",
-    getRequest
-  );
-
-  // TODO: Selector を別コンポーネントに切りたい
-  // TODO: Selector を制御コンポーネントにしたい
-
-  const showCategoryItems = useMemo(() => {
-    return !isLoading && error === undefined && data !== undefined;
-  }, [data, isLoading, error]);
+  const [selectedCategoryId, setSelectedCategoryId] = useState<CategoryId>("");
 
   const uploadFileUrl = useMemo(() => {
     if (!uploadFile) return null;
@@ -54,6 +37,7 @@ export const UploadModal: FC<{ open: boolean; onClose: () => void }> = ({
         // ステートの初期化
         setUploadFile(null);
         setKeywords([{ id: keywordIdGen(), value: "" }]);
+        setSelectedCategoryId("");
         onClose();
       }}
     >
@@ -105,50 +89,10 @@ export const UploadModal: FC<{ open: boolean; onClose: () => void }> = ({
             <section>
               <h2>Choose image feeling</h2>
               <div>
-                <Select.Root>
-                  <Select.Trigger
-                    className="select-trigger"
-                    aria-label="feeling"
-                  >
-                    <Select.Value placeholder="Select image feeling..." />
-                    <Select.Icon className="select-icon">
-                      <ChevronDownIcon />
-                    </Select.Icon>
-                  </Select.Trigger>
-                  <Select.Portal>
-                    <Select.Content className="select-content">
-                      <Select.ScrollUpButton>
-                        <ChevronUpIcon />
-                      </Select.ScrollUpButton>
-                      <Select.Viewport className="select-viewport">
-                        <Select.Group>
-                          {isLoading && (
-                            <div className="select-data-message">
-                              loading...
-                            </div>
-                          )}
-                          {error !== undefined && (
-                            <div className="select-data-message">
-                              データの取得に失敗しました
-                            </div>
-                          )}
-                          {showCategoryItems &&
-                            data?.map((v) => (
-                              <SelectItem
-                                key={v.id}
-                                value={v.id}
-                                text={`${v.emoji} ${v.name}`}
-                              />
-                            ))}
-                        </Select.Group>
-                        <Select.Separator className="SelectSeparator" />
-                      </Select.Viewport>
-                      <Select.ScrollDownButton className="SelectScrollButton">
-                        <ChevronDownIcon />
-                      </Select.ScrollDownButton>
-                    </Select.Content>
-                  </Select.Portal>
-                </Select.Root>
+                <CategorySelector
+                  categoryId={selectedCategoryId}
+                  changeHandler={(v) => setSelectedCategoryId(v)}
+                />
               </div>
             </section>
             <section>
@@ -225,16 +169,5 @@ const KeywordInput: FC<{
       value={value}
       onChange={(e) => handleChange(e.currentTarget.value)}
     />
-  );
-};
-
-const SelectItem: FC<{ value: number; text: string }> = ({ value, text }) => {
-  return (
-    <Select.Item value={String(value)} className="select-item">
-      <Select.ItemText>{text}</Select.ItemText>
-      <Select.ItemIndicator className="select-item-indicator">
-        <CheckIcon />
-      </Select.ItemIndicator>
-    </Select.Item>
   );
 };
