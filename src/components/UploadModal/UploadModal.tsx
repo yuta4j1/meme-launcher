@@ -5,6 +5,7 @@ import CategorySelector from "../CategorySelector";
 import { keywordIdGen } from "../../util/random";
 import { RxCross1 } from "react-icons/rx";
 import { FiPlus } from "react-icons/fi";
+import { putObject } from "../../r2";
 import "./UploadModal.css";
 
 type Keyword = {
@@ -95,6 +96,7 @@ export const UploadModal: FC<{ open: boolean; onClose: () => void }> = ({
                 />
               </div>
             </section>
+            <div style={{ height: "32px" }}></div>
             <section>
               <h2>Tag or Keyword</h2>
               <div className="keyword-input-container">
@@ -145,7 +147,13 @@ export const UploadModal: FC<{ open: boolean; onClose: () => void }> = ({
                 <button className="modal-button cancel-button">Cancel</button>
               </Dialog.Close>
               <Dialog.Close asChild>
-                <button className="modal-button upload-button">
+                <button
+                  className="modal-button upload-button"
+                  onClick={async () => {
+                    if (uploadFile === null) return;
+                    await putObject(uploadFile.name, uploadFile);
+                  }}
+                >
                   <IoCloudUploadOutline />
                   <span className="upload-button-text">Upload</span>
                 </button>
