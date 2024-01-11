@@ -1,4 +1,11 @@
-import { FC, useState, useRef, useMemo } from "react";
+import {
+  FC,
+  useState,
+  useRef,
+  useMemo,
+  useCallback,
+  MouseEventHandler,
+} from "react";
 import * as Dialog from "@radix-ui/react-dialog";
 import { IoCloudUploadOutline } from "react-icons/io5";
 import CategorySelector from "../CategorySelector";
@@ -6,6 +13,7 @@ import { keywordIdGen } from "../../util/random";
 import { RxCross1 } from "react-icons/rx";
 import { FiPlus } from "react-icons/fi";
 import { putObject } from "../../r2";
+import { createBlobMd5 } from "../../util/md5";
 import "./UploadModal.css";
 
 type Keyword = {
@@ -30,6 +38,21 @@ export const UploadModal: FC<{ open: boolean; onClose: () => void }> = ({
     if (!uploadFile) return null;
     return URL.createObjectURL(uploadFile);
   }, [uploadFile]);
+
+  const onUploadClick: MouseEventHandler<HTMLButtonElement> = useCallback(
+    async (e) => {
+      e.stopPropagation();
+      if (uploadFile === null) return;
+      try {
+        const bucketKey = await createBlobMd5(uploadFile);
+        await putObject(bucketKey, uploadFile);
+        console.log("upload success!");
+      } catch (e) {
+        console.error(e);
+      }
+    },
+    [uploadFile]
+  );
 
   return (
     <Dialog.Root
@@ -149,10 +172,7 @@ export const UploadModal: FC<{ open: boolean; onClose: () => void }> = ({
               <Dialog.Close asChild>
                 <button
                   className="modal-button upload-button"
-                  onClick={async () => {
-                    if (uploadFile === null) return;
-                    await putObject(uploadFile.name, uploadFile);
-                  }}
+                  onClick={onUploadClick}
                 >
                   <IoCloudUploadOutline />
                   <span className="upload-button-text">Upload</span>

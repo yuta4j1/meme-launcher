@@ -11,13 +11,13 @@ const S3 = new S3Client({
   },
 });
 
-export const putObject = async (fileName: string, file: Blob) => {
+export const putObject = (bucketKey: string, file: Blob) => {
   const command = new PutObjectCommand({
-    Key: fileName,
-    Bucket: "meme-launcher-storage",
+    Key: bucketKey,
+    Bucket: "meme-bucket",
     Body: file,
+    ContentType: file.type,
     ACL: "public-read",
   });
-  const res = await S3.send(command);
-  console.log(res);
+  S3.send(command);
 };
