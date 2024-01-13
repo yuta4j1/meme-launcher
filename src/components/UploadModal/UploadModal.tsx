@@ -14,6 +14,8 @@ import { RxCross1 } from "react-icons/rx";
 import { FiPlus } from "react-icons/fi";
 import { putObject } from "../../r2";
 import { createBlobMd5 } from "../../util/md5";
+import { postRequest } from "../../api";
+import type { CreateImageParam } from "../../types/image";
 import "./UploadModal.css";
 
 type Keyword = {
@@ -40,18 +42,31 @@ export const UploadModal: FC<{ open: boolean; onClose: () => void }> = ({
   }, [uploadFile]);
 
   const onUploadClick: MouseEventHandler<HTMLButtonElement> = useCallback(
+    // TODO: 登録後UIインタラクション
     async (e) => {
       e.stopPropagation();
+      // TODO: validation
       if (uploadFile === null) return;
       try {
         const bucketKey = await createBlobMd5(uploadFile);
-        await putObject(bucketKey, uploadFile);
-        console.log("upload success!");
+        const imageUrl = await putObject(bucketKey, uploadFile);
+        // テスト用
+        // const imageUrl =
+        //   "https://pub-78d18efa4b2b46d4b2d7d76d085c391f.r2.dev/82277005fea708030a95f381f6fcdf75";
+
+        const res = await postRequest<CreateImageParam, {}>("/image", {
+          imageUrl,
+          categoryId: Number(selectedCategoryId),
+          tagList: keywords
+            .map((keyword) => keyword.value)
+            .filter((it) => it !== ""),
+        });
+        console.log(res);
       } catch (e) {
         console.error(e);
       }
     },
-    [uploadFile]
+    [uploadFile, selectedCategoryId, keywords]
   );
 
   return (

@@ -11,7 +11,10 @@ const S3 = new S3Client({
   },
 });
 
-export const putObject = (bucketKey: string, file: Blob) => {
+export const putObject = async (
+  bucketKey: string,
+  file: Blob
+): Promise<string> => {
   const command = new PutObjectCommand({
     Key: bucketKey,
     Bucket: "meme-bucket",
@@ -19,5 +22,6 @@ export const putObject = (bucketKey: string, file: Blob) => {
     ContentType: file.type,
     ACL: "public-read",
   });
-  S3.send(command);
+  await S3.send(command);
+  return `${import.meta.env.VITE_BUCKET_BASE_URL}/${bucketKey}`;
 };
