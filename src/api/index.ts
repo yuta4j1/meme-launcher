@@ -15,8 +15,8 @@ export const postRequest = async <P, R>(path: string, param: P): Promise<R> => {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      body: JSON.stringify(param),
     },
+    body: JSON.stringify(param),
   });
   return res.json();
 };
