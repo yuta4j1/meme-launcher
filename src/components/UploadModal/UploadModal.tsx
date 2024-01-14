@@ -89,7 +89,6 @@ export const UploadModal: FC<{ open: boolean; onClose: () => void }> = ({
     >
       <Dialog.Portal>
         <Dialog.Overlay className="modal-overlay" />
-        <div className="loader-conatiner"></div>
         <Dialog.Content className="modal-content">
           <div className="modal-header">
             <Dialog.Title>画像を追加する</Dialog.Title>

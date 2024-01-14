@@ -1,8 +1,6 @@
 .modal-content {
     position: absolute;
     z-index: 5;
-    /* top: 10%;
-    left: 20%; */
     border-radius: 8px;
     color: #fff;
     background: #202439;
