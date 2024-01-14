@@ -1,13 +1,16 @@
 .modal-content {
     position: absolute;
     z-index: 5;
-    top: 10%;
-    left: 20%;
+    /* top: 10%;
+    left: 20%; */
     border-radius: 8px;
     color: #fff;
     background: #202439;
     width: 600px;
+    height: 800px;
     border: 1px solid #45464F;
+    inset: 0;
+    margin: auto;
 }
 
 .modal-overlay {
@@ -63,6 +66,7 @@
 
 .cancel-button {
     background: transparent;
+    font-size: 0.9rem;
     color: #fff;
 }
 
