@@ -23,5 +23,5 @@ export const putObject = async (
     ACL: "public-read",
   });
   await S3.send(command);
-  return `${import.meta.env.VITE_BUCKET_BASE_URL}/${bucketKey}`;
+  return import.meta.env.VITE_BUCKET_BASE_URL + bucketKey;
 };
