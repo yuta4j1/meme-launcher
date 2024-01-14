@@ -44,7 +44,8 @@ export const UploadModal: FC<{ open: boolean; onClose: () => void }> = ({
   const onUploadClick: MouseEventHandler<HTMLButtonElement> = useCallback(
     // TODO: 登録後UIインタラクション
     async (e) => {
-      e.stopPropagation();
+      // TODO: Enterキーに反応しなくなりそうなので対策したい
+      e.preventDefault();
       // TODO: validation
       if (uploadFile === null) return;
       try {
@@ -54,7 +55,7 @@ export const UploadModal: FC<{ open: boolean; onClose: () => void }> = ({
         // const imageUrl =
         //   "https://pub-78d18efa4b2b46d4b2d7d76d085c391f.r2.dev/82277005fea708030a95f381f6fcdf75";
 
-        const res = await postRequest<CreateImageParam, {}>("/image", {
+        const res = await postRequest<CreateImageParam, {}>("/images", {
           imageUrl,
           categoryId: Number(selectedCategoryId),
           tagList: keywords

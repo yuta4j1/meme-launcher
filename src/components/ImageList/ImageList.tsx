@@ -13,7 +13,7 @@ export function ImageList() {
     data: imageList,
     isLoading,
     error,
-  } = useSWR<ImageListReponse>("/image_list", getRequest);
+  } = useSWR<ImageListReponse>("/images", getRequest);
   if (isLoading) {
     return <div>loading...</div>;
   }
