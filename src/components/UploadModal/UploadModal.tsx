@@ -35,6 +35,13 @@ export const UploadModal: FC<{ open: boolean; onClose: () => void }> = ({
     { id: keywordIdGen(), value: "" },
   ]);
   const [selectedCategoryId, setSelectedCategoryId] = useState<CategoryId>("");
+  const [isUploading, setIsUploading] = useState(false);
+
+  const initializeState = useCallback(() => {
+    setUploadFile(null);
+    setKeywords([{ id: keywordIdGen(), value: "" }]);
+    setSelectedCategoryId("");
+  }, [setUploadFile, setKeywords, setSelectedCategoryId]);
 
   const uploadFileUrl = useMemo(() => {
     if (!uploadFile) return null;
@@ -43,17 +50,15 @@ export const UploadModal: FC<{ open: boolean; onClose: () => void }> = ({
 
   const onUploadClick: MouseEventHandler<HTMLButtonElement> = useCallback(
     // TODO: 登録後UIインタラクション
-    async (e) => {
+    async () => {
       // TODO: Enterキーに反応しなくなりそうなので対策したい
-      e.preventDefault();
+      // e.preventDefault();
+      setIsUploading(true);
       // TODO: validation
       if (uploadFile === null) return;
       try {
         const bucketKey = await createBlobMd5(uploadFile);
         const imageUrl = await putObject(bucketKey, uploadFile);
-        // テスト用
-        // const imageUrl =
-        //   "https://pub-78d18efa4b2b46d4b2d7d76d085c391f.r2.dev/82277005fea708030a95f381f6fcdf75";
 
         const res = await postRequest<CreateImageParam, {}>("/images", {
           imageUrl,
@@ -63,11 +68,14 @@ export const UploadModal: FC<{ open: boolean; onClose: () => void }> = ({
             .filter((it) => it !== ""),
         });
         console.log(res);
+        initializeState();
+        onClose();
       } catch (e) {
         console.error(e);
       }
+      setIsUploading(false);
     },
-    [uploadFile, selectedCategoryId, keywords]
+    [uploadFile, selectedCategoryId, keywords, onClose]
   );
 
   return (
@@ -75,20 +83,18 @@ export const UploadModal: FC<{ open: boolean; onClose: () => void }> = ({
       open={open}
       onOpenChange={() => {
         // ステートの初期化
-        setUploadFile(null);
-        setKeywords([{ id: keywordIdGen(), value: "" }]);
-        setSelectedCategoryId("");
+        initializeState();
         onClose();
       }}
     >
       <Dialog.Portal>
         <Dialog.Overlay className="modal-overlay" />
+        <div className="loader-conatiner"></div>
         <Dialog.Content className="modal-content">
           <div className="modal-header">
-            <Dialog.Title>Upload your meme</Dialog.Title>
+            <Dialog.Title>画像を追加する</Dialog.Title>
             <Dialog.Description>
-              If you have images you would like to add to the list, you can
-              upload them here.
+              あなたの素敵なミーム画像を追加しましょう！
             </Dialog.Description>
           </div>
           <input
@@ -127,7 +133,7 @@ export const UploadModal: FC<{ open: boolean; onClose: () => void }> = ({
               </div>
             </div>
             <section>
-              <h2>Choose image feeling</h2>
+              <h2>画像に合う絵文字を選択</h2>
               <div>
                 <CategorySelector
                   categoryId={selectedCategoryId}
@@ -137,7 +143,7 @@ export const UploadModal: FC<{ open: boolean; onClose: () => void }> = ({
             </section>
             <div style={{ height: "32px" }}></div>
             <section>
-              <h2>Tag or Keyword</h2>
+              <h2>追加したいタグを入力</h2>
               <div className="keyword-input-container">
                 {keywords.map((v) => (
                   <div className="input-row">
@@ -174,7 +180,7 @@ export const UploadModal: FC<{ open: boolean; onClose: () => void }> = ({
                   }
                 >
                   <FiPlus size={16} />
-                  <span className="plus-button-text">Add Keyword</span>
+                  <span className="plus-button-text">タグを増やす</span>
                 </button>
               </div>
             </section>
@@ -183,17 +189,18 @@ export const UploadModal: FC<{ open: boolean; onClose: () => void }> = ({
           <div className="modal-footer">
             <div className="modal-footer-button-container">
               <Dialog.Close asChild>
-                <button className="modal-button cancel-button">Cancel</button>
-              </Dialog.Close>
-              <Dialog.Close asChild>
-                <button
-                  className="modal-button upload-button"
-                  onClick={onUploadClick}
-                >
-                  <IoCloudUploadOutline />
-                  <span className="upload-button-text">Upload</span>
+                <button className="modal-button cancel-button">
+                  キャンセル
                 </button>
               </Dialog.Close>
+              <button
+                className="modal-button upload-button"
+                onClick={onUploadClick}
+                disabled={isUploading}
+              >
+                <IoCloudUploadOutline />
+                <span className="upload-button-text">アップロード</span>
+              </button>
             </div>
           </div>
         </Dialog.Content>
