@@ -1,8 +1,15 @@
-.container {
+.images-container {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
   gap: 32px 16px;
   padding: 24px
+}
+
+.preview-button {
+  border: none;
+  background: transparent;
+  border-radius: 8px;
+  padding: none;
 }
 
 img {
