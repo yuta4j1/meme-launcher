@@ -2,6 +2,7 @@ import { useState } from "react";
 import { IoCloudUploadOutline } from "react-icons/io5";
 import "./Header.css";
 import UploadModal from "../UploadModal";
+import FilterSelector from "../FilterSelector";
 import { MagnifyingGlassIcon } from "@radix-ui/react-icons";
 
 export function Header() {
@@ -10,7 +11,6 @@ export function Header() {
 
   return (
     <header className="header-container">
-      {/** TODO: 虫眼鏡アイコン入れたい */}
       <div className="search-icon">
         <MagnifyingGlassIcon width="24" height="24" />
       </div>
@@ -22,6 +22,7 @@ export function Header() {
         onChange={(e) => setSearchKey(e.target.value)}
       />
       <div className="header-menu-container">
+        <FilterSelector />
         <button
           className="upload-action-button"
           onClick={() => {
