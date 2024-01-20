@@ -4,9 +4,16 @@ export type CreateImageParam = {
   tagList: string[];
 };
 
-export type ImageListReponse = {
+export type Image = {
   id: number;
   imageUrl: string;
   categoryId: number;
   tagList: string[];
+};
+
+type ImageList = Image[];
+
+export type ImageListByCategories = {
+  categoryId: number;
+  images: ImageList;
 }[];
