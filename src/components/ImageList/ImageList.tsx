@@ -25,7 +25,13 @@ function ClickableImage(props: {
         })
       }
     >
-      <img src={url} width={270} height={180} alt={altText} />
+      <img
+        className={styles.image}
+        src={url}
+        width={270}
+        height={180}
+        alt={altText}
+      />
     </button>
   );
 }
