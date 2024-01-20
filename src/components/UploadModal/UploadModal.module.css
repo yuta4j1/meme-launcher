@@ -40,6 +40,20 @@
     cursor: pointer;
 }
 
+.fileInputMessage {
+    display: flex;
+    align-items: center;
+}
+
+.fileInputMessageText {
+    margin-left: 4px;
+}
+
+.droppedImage {
+    border-radius: 8px;
+    object-fit: cover;
+}
+
 .modalHeader {
     padding: 16px 32px 0px 32px;
 }

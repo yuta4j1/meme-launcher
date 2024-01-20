@@ -13,6 +13,7 @@ import { IoCloudUploadOutline } from "react-icons/io5";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { RxCross1 } from "react-icons/rx";
 import { FiPlus } from "react-icons/fi";
+import { ImageIcon } from "@radix-ui/react-icons";
 import { putObject } from "../../r2";
 import { createBlobMd5 } from "../../util/md5";
 import { postRequest } from "../../api";
@@ -102,6 +103,7 @@ export const UploadModal: FC<{ open: boolean; onClose: () => void }> = ({
           <input
             type="file"
             style={{ display: "none" }}
+            accept="image/png,image/jpeg"
             ref={fileRef}
             onChange={(e) => {
               const files = e.target.files;
@@ -127,10 +129,21 @@ export const UploadModal: FC<{ open: boolean; onClose: () => void }> = ({
                   fileRef.current?.click();
                 }}
               >
-                {uploadFile === null &&
-                  "ファイルをドラッグ&ドロップしてください"}
+                {uploadFile === null && (
+                  <div className={styles.fileInputMessage}>
+                    <ImageIcon />
+                    <span className={styles.fileInputMessageText}>
+                      ファイルをドラッグ&ドロップしてください
+                    </span>
+                  </div>
+                )}
                 {uploadFile !== null && uploadFileUrl !== null && (
-                  <img src={uploadFileUrl} width="500" height="300" />
+                  <img
+                    className={styles.droppedImage}
+                    src={uploadFileUrl}
+                    width="500"
+                    height="300"
+                  />
                 )}
               </div>
             </div>
