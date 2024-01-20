@@ -3,7 +3,7 @@ import { useImageList } from "../../hooks/useImageList";
 import { useCategories } from "../../hooks/useCategories";
 import type { Image } from "../../types/image";
 import PreviewModal from "../PreviewModal";
-import "./ImageList.css";
+import styles from "./ImageList.module.css";
 
 function ClickableImage(props: {
   id: string;
@@ -14,7 +14,7 @@ function ClickableImage(props: {
   const { id, url, altText, handleClick } = props;
   return (
     <button
-      className="preview-button"
+      className={styles.previewButton}
       aria-label="画像プレビューボタン"
       onClick={() =>
         handleClick({
@@ -62,12 +62,14 @@ export function ImageList() {
     return <div>error: {error}</div>;
   }
   return (
-    <div className="images-container">
+    <div className={styles.imagesContainer}>
       {imageListByCategories &&
         imageListByCategories.map((c) => (
           <div key={c.categoryId}>
-            <div className="category-label">{categoryLabel(c.categoryId)}</div>
-            <div className="images-grid">
+            <div className={styles.categoryLabel}>
+              {categoryLabel(c.categoryId)}
+            </div>
+            <div className={styles.imagesGrid}>
               {c.images.map((image) => (
                 <ClickableImage
                   key={image.id}

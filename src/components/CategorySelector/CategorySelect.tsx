@@ -8,7 +8,7 @@ import {
   ChevronUpIcon,
 } from "@radix-ui/react-icons";
 import type { CategoriesResponse } from "../../types/category";
-import "./CategorySelector.css";
+import styles from "./CategorySelector.module.css";
 
 export const CategorySelector: FC<{
   categoryId: string;
@@ -25,24 +25,24 @@ export const CategorySelector: FC<{
 
   return (
     <Select.Root value={categoryId} onValueChange={(v) => changeHandler(v)}>
-      <Select.Trigger className="select-trigger" aria-label="feeling">
+      <Select.Trigger className={styles.selectTrigger} aria-label="feeling">
         <Select.Value placeholder="Select image feeling..." />
-        <Select.Icon className="select-icon">
+        <Select.Icon className={styles.selectIcon}>
           <ChevronDownIcon />
         </Select.Icon>
       </Select.Trigger>
       <Select.Portal>
-        <Select.Content className="select-content">
+        <Select.Content className={styles.selectContent}>
           <Select.ScrollUpButton>
             <ChevronUpIcon />
           </Select.ScrollUpButton>
-          <Select.Viewport className="select-viewport">
+          <Select.Viewport className={styles.selectViewport}>
             <Select.Group>
               {isLoading && (
-                <div className="select-data-message">loading...</div>
+                <div className={styles.selectDataMessage}>loading...</div>
               )}
               {error !== undefined && (
-                <div className="select-data-message">
+                <div className={styles.selectDataMessage}>
                   データの取得に失敗しました
                 </div>
               )}

@@ -16,7 +16,7 @@ import { putObject } from "../../r2";
 import { createBlobMd5 } from "../../util/md5";
 import { postRequest } from "../../api";
 import type { CreateImageParam } from "../../types/image";
-import "./UploadModal.css";
+import styles from "./UploadModal.module.css";
 
 type Keyword = {
   id: string;
@@ -88,9 +88,9 @@ export const UploadModal: FC<{ open: boolean; onClose: () => void }> = ({
       }}
     >
       <Dialog.Portal>
-        <Dialog.Overlay className="modal-overlay" />
-        <Dialog.Content className="modal-content">
-          <div className="modal-header">
+        <Dialog.Overlay className={styles.modalOverlay} />
+        <Dialog.Content className={styles.modalContent}>
+          <div className={styles.modalHeader}>
             <Dialog.Title>画像を追加する</Dialog.Title>
             <Dialog.Description>
               あなたの素敵なミーム画像を追加しましょう！
@@ -107,10 +107,10 @@ export const UploadModal: FC<{ open: boolean; onClose: () => void }> = ({
               }
             }}
           />
-          <div className="scrollabel-area">
-            <div className="upload-container">
+          <div className={styles.scrollabelArea}>
+            <div className={styles.uploadContainer}>
               <div
-                className="droppable-area"
+                className={styles.droppableArea}
                 onDragOver={(e) => {
                   e.preventDefault();
                 }}
@@ -143,9 +143,9 @@ export const UploadModal: FC<{ open: boolean; onClose: () => void }> = ({
             <div style={{ height: "32px" }}></div>
             <section>
               <h2>追加したいタグを入力</h2>
-              <div className="keyword-input-container">
+              <div className={styles.keywordInputContainer}>
                 {keywords.map((v) => (
-                  <div className="input-row">
+                  <div className={styles.inputRow}>
                     <KeywordInput
                       key={v.id}
                       value={v.value}
@@ -158,7 +158,7 @@ export const UploadModal: FC<{ open: boolean; onClose: () => void }> = ({
                       }
                     />
                     <button
-                      className="delete-row-button"
+                      className={styles.deleteRowButton}
                       onClick={() =>
                         setKeywords((prev) => prev.filter((p) => p.id !== v.id))
                       }
@@ -168,9 +168,9 @@ export const UploadModal: FC<{ open: boolean; onClose: () => void }> = ({
                   </div>
                 ))}
               </div>
-              <div className="plus-button-container">
+              <div className={styles.plusButtonContainer}>
                 <button
-                  className="plus-button"
+                  className={styles.plusButton}
                   onClick={() =>
                     setKeywords((prev) => [
                       ...prev,
@@ -179,26 +179,28 @@ export const UploadModal: FC<{ open: boolean; onClose: () => void }> = ({
                   }
                 >
                   <FiPlus size={16} />
-                  <span className="plus-button-text">タグを増やす</span>
+                  <span className={styles.plusButtonText}>タグを増やす</span>
                 </button>
               </div>
             </section>
           </div>
           <div style={{ height: "16px" }}></div>
-          <div className="modal-footer">
-            <div className="modal-footer-button-container">
+          <div className={styles.modalFooter}>
+            <div className={styles.modalFooterButtonContainer}>
               <Dialog.Close asChild>
-                <button className="modal-button cancel-button">
+                <button
+                  className={`${styles.modalButton} ${styles.cancelButton}`}
+                >
                   キャンセル
                 </button>
               </Dialog.Close>
               <button
-                className="modal-button upload-button"
+                className={`${styles.modalButton} ${styles.uploadButton}`}
                 onClick={onUploadClick}
                 disabled={isUploading}
               >
                 <IoCloudUploadOutline />
-                <span className="upload-button-text">アップロード</span>
+                <span className={styles.uploadButtonText}>アップロード</span>
               </button>
             </div>
           </div>
@@ -215,7 +217,7 @@ const KeywordInput: FC<{
   return (
     <input
       type="text"
-      className="keyword-input"
+      className={styles.keywordInput}
       value={value}
       onChange={(e) => handleChange(e.currentTarget.value)}
     />

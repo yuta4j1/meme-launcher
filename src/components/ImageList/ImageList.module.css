@@ -1,0 +1,30 @@
+.imagesGrid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(260px, 1fr));
+    gap: 32px 16px;
+    padding: 24px
+}
+
+.imagesContainer {
+    padding: 16px 0;
+}
+
+.categoryLabel {
+    color: #fff;
+    padding: 8px 24px;
+    margin: 0 16px;
+    background-color: #000;
+    border-radius: 8px;
+}
+
+.previewButton {
+    border: none;
+    background: transparent;
+    border-radius: 8px;
+    padding: none;
+}
+
+.image {
+    border-radius: 8px;
+    object-fit: cover;
+}

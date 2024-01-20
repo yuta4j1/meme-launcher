@@ -1,6 +1,6 @@
 import { type FC } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
-import "./PreviewModal.css";
+import styles from "./PreviewModal.module.css";
 
 type PreviewImage = {
   id: number;
@@ -22,9 +22,9 @@ export const PreviewModal: FC<{
       }}
     >
       <Dialog.Portal>
-        <Dialog.Overlay className="preview-modal-overlay" />
+        <Dialog.Overlay className={styles.previewModalOverlay} />
         <Dialog.Content
-          className="preview-modal-content"
+          className={styles.previewModalContent}
           style={{
             backgroundImage: `url(${previewImage.imageUrl})`,
             backgroundRepeat: "no-repeat",
