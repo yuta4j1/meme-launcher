@@ -1,7 +1,7 @@
-import { useState } from "react";
-import useSWR from "swr";
-import { getRequest } from "../../api";
-import type { ImageListReponse } from "../../types/image";
+import { useState, useCallback } from "react";
+import { useImageList } from "../../hooks/useImageList";
+import { useCategories } from "../../hooks/useCategories";
+import type { Image } from "../../types/image";
 import PreviewModal from "../PreviewModal";
 import "./ImageList.css";
 
@@ -9,14 +9,21 @@ function ClickableImage(props: {
   id: string;
   url: string;
   altText: string;
-  handleClick: (imageId: string) => void;
+  handleClick: (image: Image) => void;
 }) {
   const { id, url, altText, handleClick } = props;
   return (
     <button
       className="preview-button"
       aria-label="画像プレビューボタン"
-      onClick={() => handleClick(id)}
+      onClick={() =>
+        handleClick({
+          id: Number(id),
+          imageUrl: url,
+          categoryId: 0,
+          tagList: [],
+        })
+      }
     >
       <img src={url} width={270} height={180} alt={altText} />
     </button>
@@ -25,15 +32,27 @@ function ClickableImage(props: {
 
 export function ImageList() {
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
-  const [previewedImageId, setPreviewImageId] = useState("");
-  const {
-    data: imageList,
-    isLoading,
-    error,
-  } = useSWR<ImageListReponse>("/images", getRequest);
+  const [previewedImage, setPreviewImage] = useState<Image>();
+  const { data: imageListByCategories, isLoading, error } = useImageList();
 
-  const handleImageClick = (imageId: string) => {
-    setPreviewImageId(imageId);
+  const { data: categories, showData: showCategories } = useCategories();
+
+  const categoryLabel = useCallback(
+    (categoryId: number): string => {
+      if (!showCategories) {
+        return "";
+      }
+      const category = categories?.find((it) => it.id === categoryId);
+      if (category) {
+        return `${category.emoji} ${category.name}`;
+      }
+      return "";
+    },
+    [categories, showCategories]
+  );
+
+  const handleImageClick = (image: Image) => {
+    setPreviewImage(image);
     setIsPreviewOpen(true);
   };
   if (isLoading) {
@@ -43,27 +62,30 @@ export function ImageList() {
     return <div>error: {error}</div>;
   }
   return (
-    <div>
-      {imageList && (
-        <div className="images-container">
-          {imageList.map((image) => (
-            <ClickableImage
-              key={image.id}
-              id={String(image.id)}
-              url={image.imageUrl}
-              handleClick={handleImageClick}
-              altText={""}
-            />
-          ))}
-          <PreviewModal
-            open={isPreviewOpen}
-            onClose={() => setIsPreviewOpen(false)}
-            previewImage={
-              imageList.find((img) => String(img.id) === previewedImageId) ??
-              imageList[0]
-            }
-          />
-        </div>
+    <div className="images-container">
+      {imageListByCategories &&
+        imageListByCategories.map((c) => (
+          <div key={c.categoryId}>
+            <div className="category-label">{categoryLabel(c.categoryId)}</div>
+            <div className="images-grid">
+              {c.images.map((image) => (
+                <ClickableImage
+                  key={image.id}
+                  id={String(image.id)}
+                  url={image.imageUrl}
+                  handleClick={handleImageClick}
+                  altText={""}
+                />
+              ))}
+            </div>
+          </div>
+        ))}
+      {previewedImage && (
+        <PreviewModal
+          open={isPreviewOpen}
+          onClose={() => setIsPreviewOpen(false)}
+          previewImage={previewedImage}
+        />
       )}
     </div>
   );
