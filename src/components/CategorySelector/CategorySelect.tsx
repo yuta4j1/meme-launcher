@@ -68,9 +68,9 @@ export const CategorySelector: FC<{
 
 const SelectItem: FC<{ value: number; text: string }> = ({ value, text }) => {
   return (
-    <Select.Item value={String(value)} className="select-item">
+    <Select.Item value={String(value)} className={styles.selectItem}>
       <Select.ItemText>{text}</Select.ItemText>
-      <Select.ItemIndicator className="select-item-indicator">
+      <Select.ItemIndicator className={styles.selectItemIndicator}>
         <CheckIcon />
       </Select.ItemIndicator>
     </Select.Item>
