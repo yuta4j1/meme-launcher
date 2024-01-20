@@ -1,16 +1,14 @@
 import { FC, useState } from "react";
-import { IoCloudUploadOutline } from "react-icons/io5";
 import styles from "./Header.module.css";
-import UploadModal from "../UploadModal";
 import FilterSelector from "../FilterSelector";
 import { MagnifyingGlassIcon } from "@radix-ui/react-icons";
+import PopoverMenu from "../PopoverMenu";
 
 export const Header: FC<{
   selectedCategoryId: string;
   handleCategoryChange: (id: string) => void;
 }> = ({ selectedCategoryId, handleCategoryChange }) => {
   const [searchKey, setSearchKey] = useState("");
-  const [modalOpen, setModalOpen] = useState(false);
 
   return (
     <header className={styles.headerContainer}>
@@ -29,17 +27,8 @@ export const Header: FC<{
           categoryId={selectedCategoryId}
           handleCategoryChange={handleCategoryChange}
         />
-        <button
-          className={styles.uploadActionButton}
-          onClick={() => {
-            setModalOpen(true);
-          }}
-        >
-          <IoCloudUploadOutline />
-          <span className={styles.uploadActionButtonText}>画像を追加する</span>
-        </button>
+        <PopoverMenu />
       </div>
-      <UploadModal open={modalOpen} onClose={() => setModalOpen(false)} />
     </header>
   );
 };

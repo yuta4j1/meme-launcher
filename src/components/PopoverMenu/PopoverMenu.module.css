@@ -1,0 +1,40 @@
+.menuButton {
+    border: none;
+    padding: 8px 4px;
+    border-radius: 8px;
+    background: transparent;
+    color: #6b6a6a;
+}
+
+.menuButton:active {
+    background-color: #0f0f0f69;
+}
+
+.uploadActionButton {
+    display: flex;
+    align-items: center;
+    padding: 8px 16px;
+    border-radius: 4px;
+    background: transparent;
+    color: #c2c2c2;
+    font-size: 0.9rem;
+    border: none;
+}
+
+.uploadActionButton:hover {
+    background-color: #47464669;
+}
+
+.uploadActionButtonText {
+    margin-left: 8px;
+}
+
+.popoverContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 8px 4px;
+    border-radius: 4px;
+    background-color: #000212;
+    box-shadow: 0px 0px 19px -6px #777777;
+}

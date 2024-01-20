@@ -41,18 +41,3 @@
     padding: 0 16px;
     margin-left: auto;
 }
-
-.uploadActionButton {
-    display: flex;
-    align-items: center;
-    padding: 8px 16px;
-    border-radius: 8px;
-    background: #476cc9;
-    color: #fff;
-    font-size: 0.9rem;
-    border: none;
-}
-
-.uploadActionButtonText {
-    margin-left: 8px;
-}
