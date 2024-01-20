@@ -1,17 +1,18 @@
 .preview-modal-content {
-    position: absolute;
-    z-index: 5;
+    position: fixed;
+    z-index: 3;
     border: none;
     color: #fff;
-    height: 80%;
+    max-height: 50%;
     max-width: 70%;
     background: #10121c;
     inset: 0;
     margin: auto;
+    box-shadow: 0px 0px 19px -1px #454545;
 }
 
 .preview-modal-overlay {
-    position: absolute;
+    position: fixed;
     z-index: 2;
     top: 0;
     left: 0;
@@ -19,8 +20,4 @@
     height: 100%;
     background: #000212;
     opacity: 0.6;
-}
-
-.preview-image {
-    object-fit: contain;
 }

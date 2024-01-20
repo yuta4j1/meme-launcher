@@ -31,9 +31,7 @@ export const PreviewModal: FC<{
             backgroundSize: "contain",
             backgroundPosition: "center",
           }}
-        >
-          {/* <img src={previewImage.imageUrl} alt="" className="preview-image" /> */}
-        </Dialog.Content>
+        ></Dialog.Content>
       </Dialog.Portal>
     </Dialog.Root>
   );
