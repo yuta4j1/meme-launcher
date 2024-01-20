@@ -36,12 +36,37 @@ function ClickableImage(props: {
   );
 }
 
+const ImagesGrid: FC<{
+  imageList: Image[];
+  handleImageClick: (image: Image) => void;
+}> = ({ imageList, handleImageClick }) => {
+  return (
+    <div className={styles.imagesGrid}>
+      {imageList.map((image) => (
+        <ClickableImage
+          key={image.id}
+          id={String(image.id)}
+          url={image.imageUrl}
+          handleClick={handleImageClick}
+          altText={""}
+        />
+      ))}
+    </div>
+  );
+};
+
 export const ImageList: FC<{ categoryId: string }> = ({ categoryId }) => {
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [previewedImage, setPreviewImage] = useState<Image>();
   const { data: imageListByCategories, isLoading, error } = useImageList();
 
   const { data: categories, showData: showCategories } = useCategories();
+
+  const showAll = categoryId === "0";
+
+  const filteredImages = imageListByCategories
+    ?.filter((c) => String(c.categoryId) === categoryId)
+    .flatMap((it) => it.images);
 
   const categoryLabel = useCallback(
     (categoryId: number): string => {
@@ -69,25 +94,25 @@ export const ImageList: FC<{ categoryId: string }> = ({ categoryId }) => {
   }
   return (
     <div className={styles.imagesContainer}>
-      {imageListByCategories &&
+      {showAll &&
+        imageListByCategories &&
         imageListByCategories.map((c) => (
           <div key={c.categoryId}>
             <div className={styles.categoryLabel}>
               {categoryLabel(c.categoryId)}
             </div>
-            <div className={styles.imagesGrid}>
-              {c.images.map((image) => (
-                <ClickableImage
-                  key={image.id}
-                  id={String(image.id)}
-                  url={image.imageUrl}
-                  handleClick={handleImageClick}
-                  altText={""}
-                />
-              ))}
-            </div>
+            <ImagesGrid
+              imageList={c.images}
+              handleImageClick={handleImageClick}
+            />
           </div>
         ))}
+      {!showAll && filteredImages && (
+        <ImagesGrid
+          imageList={filteredImages}
+          handleImageClick={handleImageClick}
+        />
+      )}
       {previewedImage && (
         <PreviewModal
           open={isPreviewOpen}

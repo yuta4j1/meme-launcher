@@ -4,7 +4,7 @@ import Header from "./components/Header";
 import ImageList from "./components/ImageList";
 
 function App() {
-  const [categoryId, setCategoryId] = useState<string>("");
+  const [categoryId, setCategoryId] = useState<string>("0");
   const handleCategoryChange = useCallback(
     (id: string) => {
       setCategoryId(id);
