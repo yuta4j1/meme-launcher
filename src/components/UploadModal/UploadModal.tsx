@@ -7,14 +7,16 @@ import {
   MouseEventHandler,
 } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
-import { IoCloudUploadOutline } from "react-icons/io5";
 import CategorySelector from "../CategorySelector";
 import { keywordIdGen } from "../../util/random";
+import { IoCloudUploadOutline } from "react-icons/io5";
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { RxCross1 } from "react-icons/rx";
 import { FiPlus } from "react-icons/fi";
 import { putObject } from "../../r2";
 import { createBlobMd5 } from "../../util/md5";
 import { postRequest } from "../../api";
+import { useImageList } from "../../hooks/useImageList";
 import type { CreateImageParam } from "../../types/image";
 import styles from "./UploadModal.module.css";
 
@@ -37,6 +39,8 @@ export const UploadModal: FC<{ open: boolean; onClose: () => void }> = ({
   const [selectedCategoryId, setSelectedCategoryId] = useState<CategoryId>("");
   const [isUploading, setIsUploading] = useState(false);
 
+  const { mutate } = useImageList();
+
   const initializeState = useCallback(() => {
     setUploadFile(null);
     setKeywords([{ id: keywordIdGen(), value: "" }]);
@@ -51,11 +55,9 @@ export const UploadModal: FC<{ open: boolean; onClose: () => void }> = ({
   const onUploadClick: MouseEventHandler<HTMLButtonElement> = useCallback(
     // TODO: 登録後UIインタラクション
     async () => {
-      // TODO: Enterキーに反応しなくなりそうなので対策したい
-      // e.preventDefault();
-      setIsUploading(true);
       // TODO: validation
       if (uploadFile === null) return;
+      setIsUploading(true);
       try {
         const bucketKey = await createBlobMd5(uploadFile);
         const imageUrl = await putObject(bucketKey, uploadFile);
@@ -67,6 +69,7 @@ export const UploadModal: FC<{ open: boolean; onClose: () => void }> = ({
             .map((keyword) => keyword.value)
             .filter((it) => it !== ""),
         });
+        mutate();
         console.log(res);
         initializeState();
         onClose();
@@ -199,7 +202,13 @@ export const UploadModal: FC<{ open: boolean; onClose: () => void }> = ({
                 onClick={onUploadClick}
                 disabled={isUploading}
               >
-                <IoCloudUploadOutline />
+                {isUploading ? (
+                  <div className={styles.loader}>
+                    <AiOutlineLoading3Quarters />
+                  </div>
+                ) : (
+                  <IoCloudUploadOutline />
+                )}
                 <span className={styles.uploadButtonText}>アップロード</span>
               </button>
             </div>

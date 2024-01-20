@@ -69,14 +69,36 @@
 }
 
 .uploadButton {
+    position: relative;
     display: flex;
     align-items: center;
     background: #476cc9;
     color: #fff;
 }
 
+.uploadButton:disabled {
+    filter: brightness(0.8);
+    cursor: not-allowed;
+}
+
 .uploadButtonText {
     margin-left: 8px;
+}
+
+.loader {
+    width: 16px;
+    height: 16px;
+    animation: 0.5s linear infinite rotation;
+}
+
+@keyframes rotation {
+    0% {
+        transform: rotate(0);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
 }
 
 .scrollabelArea {

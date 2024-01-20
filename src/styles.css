@@ -15,10 +15,9 @@
 }
 
 body {
-  height: 100vh;
+  min-height: 100vh;
   margin: 0;
-  background: rgb(0,2,18);
-  background: linear-gradient(-4deg, rgba(0,2,18,1) 0%, rgba(32,36,57,1) 50%, rgba(69,70,79,1) 100%);
+  background: linear-gradient(-4deg, rgba(0, 2, 18, 1) 0%, rgba(32, 36, 57, 1) 50%, rgba(69, 70, 79, 1) 100%);
 }
 
 .logo {
@@ -58,17 +57,14 @@ button {
 button:hover {
   border-color: #396cd8;
 }
+
 button:active {
   border-color: #396cd8;
-  background-color: #e8e8e8;
+  background-color: #6a8bd3;
 }
 
 input {
   outline: none;
-}
-
-#greet-input {
-  margin-right: 5px;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -80,6 +76,7 @@ input {
   a:hover {
     color: #24c8db;
   }
+
   button:active {
     background-color: #0f0f0f69;
   }
