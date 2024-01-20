@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { FC, useState, useCallback } from "react";
 import { useImageList } from "../../hooks/useImageList";
 import { useCategories } from "../../hooks/useCategories";
 import type { Image } from "../../types/image";
@@ -36,7 +36,7 @@ function ClickableImage(props: {
   );
 }
 
-export function ImageList() {
+export const ImageList: FC<{ categoryId: string }> = ({ categoryId }) => {
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [previewedImage, setPreviewImage] = useState<Image>();
   const { data: imageListByCategories, isLoading, error } = useImageList();
@@ -97,4 +97,4 @@ export function ImageList() {
       )}
     </div>
   );
-}
+};

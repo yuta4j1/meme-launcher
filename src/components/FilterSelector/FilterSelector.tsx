@@ -1,4 +1,4 @@
-import { FC, useState, Fragment } from "react";
+import { FC, Fragment } from "react";
 import * as Select from "@radix-ui/react-select";
 import {
   CheckIcon,
@@ -8,14 +8,17 @@ import {
 import { useCategories } from "../../hooks/useCategories";
 import styles from "./FilterSelector.module.css";
 
-export const FilterSelector = () => {
+export const FilterSelector: FC<{
+  categoryId: string;
+  handleCategoryChange: (id: string) => void;
+}> = ({ categoryId, handleCategoryChange }) => {
   const { data, showData, isLoading, error } = useCategories();
-  const [categoryId, setCategoryId] = useState<string>("");
+
   return (
     <Select.Root
       value={categoryId}
       onValueChange={(v) => {
-        setCategoryId(v);
+        handleCategoryChange(v);
       }}
     >
       <Select.Trigger className={styles.selectTrigger} aria-label="feeling">

@@ -1,11 +1,14 @@
-import { useState } from "react";
+import { FC, useState } from "react";
 import { IoCloudUploadOutline } from "react-icons/io5";
 import styles from "./Header.module.css";
 import UploadModal from "../UploadModal";
 import FilterSelector from "../FilterSelector";
 import { MagnifyingGlassIcon } from "@radix-ui/react-icons";
 
-export function Header() {
+export const Header: FC<{
+  selectedCategoryId: string;
+  handleCategoryChange: (id: string) => void;
+}> = ({ selectedCategoryId, handleCategoryChange }) => {
   const [searchKey, setSearchKey] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
 
@@ -22,7 +25,10 @@ export function Header() {
         onChange={(e) => setSearchKey(e.target.value)}
       />
       <div className={styles.headerMenuContainer}>
-        <FilterSelector />
+        <FilterSelector
+          categoryId={selectedCategoryId}
+          handleCategoryChange={handleCategoryChange}
+        />
         <button
           className={styles.uploadActionButton}
           onClick={() => {
@@ -36,4 +42,4 @@ export function Header() {
       <UploadModal open={modalOpen} onClose={() => setModalOpen(false)} />
     </header>
   );
-}
+};
