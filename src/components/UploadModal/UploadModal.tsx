@@ -18,6 +18,7 @@ import { putObject } from "../../r2";
 import { createBlobMd5 } from "../../util/md5";
 import { postRequest } from "../../api";
 import { useImageList } from "../../hooks/useImageList";
+import { useDispatchNotifierState } from "../../hooks/useDispatchNotifierState";
 import type { CreateImageParam } from "../../types/image";
 import styles from "./UploadModal.module.css";
 
@@ -41,6 +42,7 @@ export const UploadModal: FC<{ open: boolean; onClose: () => void }> = ({
   const [isUploading, setIsUploading] = useState(false);
 
   const { mutate } = useImageList();
+  const dispatchNotifierState = useDispatchNotifierState();
 
   const initializeState = useCallback(() => {
     setUploadFile(null);
@@ -74,6 +76,11 @@ export const UploadModal: FC<{ open: boolean; onClose: () => void }> = ({
         console.log(res);
         initializeState();
         onClose();
+        dispatchNotifierState({
+          show: true,
+          type: "success",
+          message: "画像のアップロードが完了しました",
+        });
       } catch (e) {
         console.error(e);
       }

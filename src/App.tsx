@@ -2,6 +2,7 @@ import { useState, useCallback } from "react";
 import "./App.css";
 import Header from "./components/Header";
 import ImageList from "./components/ImageList";
+import NotifierContextProvider from "./components/NotifierContextProvider";
 
 function App() {
   const [categoryId, setCategoryId] = useState<string>("0");
@@ -12,7 +13,7 @@ function App() {
     [setCategoryId]
   );
   return (
-    <div>
+    <NotifierContextProvider>
       <Header
         selectedCategoryId={categoryId}
         handleCategoryChange={handleCategoryChange}
@@ -20,7 +21,7 @@ function App() {
       <main>
         <ImageList categoryId={categoryId} />
       </main>
-    </div>
+    </NotifierContextProvider>
   );
 }
 
