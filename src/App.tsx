@@ -1,11 +1,11 @@
 import { useState, useCallback } from "react";
-import "./App.css";
 import Header from "./components/Header";
 import ImageList from "./components/ImageList";
 import NotifierContextProvider from "./components/NotifierContextProvider";
 
 function App() {
   const [categoryId, setCategoryId] = useState<string>("0");
+  const [searchKeyword, setSearchKeyword] = useState("");
   const handleCategoryChange = useCallback(
     (id: string) => {
       setCategoryId(id);
@@ -15,11 +15,13 @@ function App() {
   return (
     <NotifierContextProvider>
       <Header
+        searchKeyword={searchKeyword}
+        handleKeywordChange={(value) => setSearchKeyword(value)}
         selectedCategoryId={categoryId}
         handleCategoryChange={handleCategoryChange}
       />
       <main>
-        <ImageList categoryId={categoryId} />
+        <ImageList searchKeyword={searchKeyword} categoryId={categoryId} />
       </main>
     </NotifierContextProvider>
   );

@@ -1,4 +1,4 @@
-import { FC, useState, useCallback } from "react";
+import { FC, useState, useCallback, useMemo } from "react";
 import { useImageList } from "../../hooks/useImageList";
 import { useCategories } from "../../hooks/useCategories";
 import type { Image } from "../../types/image";
@@ -55,7 +55,10 @@ const ImagesGrid: FC<{
   );
 };
 
-export const ImageList: FC<{ categoryId: string }> = ({ categoryId }) => {
+export const ImageList: FC<{ categoryId: string; searchKeyword: string }> = ({
+  categoryId,
+  searchKeyword,
+}) => {
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [previewedImage, setPreviewImage] = useState<Image>();
   const { data: imageListByCategories, isLoading, error } = useImageList();
@@ -64,9 +67,39 @@ export const ImageList: FC<{ categoryId: string }> = ({ categoryId }) => {
 
   const showAll = categoryId === "0";
 
-  const filteredImages = imageListByCategories
-    ?.filter((c) => String(c.categoryId) === categoryId)
-    .flatMap((it) => it.images);
+  const filteredImagesByCategory = useMemo(() => {
+    if (imageListByCategories === undefined) {
+      return [];
+    }
+    const images = imageListByCategories
+      ?.filter((c) => String(c.categoryId) === categoryId)
+      .flatMap((it) => it.images);
+    if (searchKeyword === "") {
+      return images;
+    } else {
+      return images.filter((image) =>
+        image.tagList.some((tag) => tag.includes(searchKeyword))
+      );
+    }
+  }, [categoryId, imageListByCategories, searchKeyword]);
+
+  const filteredAllCategoriesImages = useMemo(() => {
+    if (imageListByCategories === undefined) {
+      return [];
+    }
+    if (searchKeyword === "") {
+      return imageListByCategories;
+    }
+
+    return imageListByCategories
+      .map((category) => ({
+        categoryId: category.categoryId,
+        images: category.images.filter((image) =>
+          image.tagList.some((tag) => tag.includes(searchKeyword))
+        ),
+      }))
+      .filter((category) => category.images.length > 0);
+  }, [imageListByCategories, searchKeyword]);
 
   const categoryLabel = useCallback(
     (categoryId: number): string => {
@@ -96,7 +129,7 @@ export const ImageList: FC<{ categoryId: string }> = ({ categoryId }) => {
     <div className={styles.imagesContainer}>
       {showAll &&
         imageListByCategories &&
-        imageListByCategories.map((c) => (
+        filteredAllCategoriesImages?.map((c) => (
           <div key={c.categoryId}>
             <div className={styles.categoryLabel}>
               {categoryLabel(c.categoryId)}
@@ -107,9 +140,9 @@ export const ImageList: FC<{ categoryId: string }> = ({ categoryId }) => {
             />
           </div>
         ))}
-      {!showAll && filteredImages && (
+      {filteredImagesByCategory && (
         <ImagesGrid
-          imageList={filteredImages}
+          imageList={filteredImagesByCategory}
           handleImageClick={handleImageClick}
         />
       )}
