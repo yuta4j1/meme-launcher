@@ -8,10 +8,11 @@ import styles from "./ImageList.module.css";
 function ClickableImage(props: {
   id: string;
   url: string;
+  tagList: string[];
   altText: string;
   handleClick: (image: Image) => void;
 }) {
-  const { id, url, altText, handleClick } = props;
+  const { id, url, tagList, altText, handleClick } = props;
   return (
     <button
       className={styles.previewButton}
@@ -21,7 +22,7 @@ function ClickableImage(props: {
           id: Number(id),
           imageUrl: url,
           categoryId: 0,
-          tagList: [],
+          tagList,
         })
       }
     >
@@ -47,6 +48,7 @@ const ImagesGrid: FC<{
           key={image.id}
           id={String(image.id)}
           url={image.imageUrl}
+          tagList={image.tagList}
           handleClick={handleImageClick}
           altText={""}
         />

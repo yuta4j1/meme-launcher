@@ -21,3 +21,35 @@
     background: #000212;
     opacity: 0.6;
 }
+
+.tagList {
+    position: absolute;
+    top: -32px;
+    left: 0;
+    z-index: 4;
+    display: flex;
+    gap: 8px;
+}
+
+.tagButton {
+    padding: 4px 8px;
+    border-radius: 4px;
+    background: #10121c;
+    color: #cfcfcf;
+    font-size: 0.8rem;
+    border: 1px solid #828283;
+    outline: none;
+}
+
+.tooltipContent {
+    padding: 0px 8px;
+    border-radius: 4px;
+    background: black;
+    color: white;
+    font-weight: bold;
+    font-size: 0.6rem;
+}
+
+.tooltipArrow {
+    fill: black;
+}
