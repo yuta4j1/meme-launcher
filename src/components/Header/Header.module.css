@@ -1,10 +1,42 @@
 .headerContainer {
+    position: sticky;
+    top: -56px;
     height: 56px;
     width: 100%;
     background: #1E2228;
     border-bottom: 1px solid #5D656D;
     display: flex;
     align-items: center;
+}
+
+.headerShow {
+    animation: show 0.2s linear;
+    animation-fill-mode: forwards;
+}
+
+@keyframes show {
+    0% {
+        top: -56px;
+    }
+
+    100% {
+        top: 0px;
+    }
+}
+
+.headerHide {
+    animation: hide 0.2s cubic-bezier(0.55, 0.055, 0.675, 0.19);
+    animation-fill-mode: forwards;
+}
+
+@keyframes hide {
+    0% {
+        top: 0px;
+    }
+
+    100% {
+        top: -56px;
+    }
 }
 
 .searchIcon {

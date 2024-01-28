@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC, useMemo } from "react";
 import styles from "./Header.module.css";
 import FilterSelector from "../FilterSelector";
 import { MagnifyingGlassIcon } from "@radix-ui/react-icons";
@@ -9,14 +9,25 @@ export const Header: FC<{
   handleKeywordChange: (value: string) => void;
   selectedCategoryId: string;
   handleCategoryChange: (id: string) => void;
+  isScrollUp?: boolean;
 }> = ({
   searchKeyword,
   handleKeywordChange,
   selectedCategoryId,
   handleCategoryChange,
+  isScrollUp,
 }) => {
+  const headerClassesName = useMemo(() => {
+    const classes = [styles.headerContainer];
+    if (isScrollUp) {
+      classes.push(styles.headerShow);
+    } else {
+      classes.push(styles.headerHide);
+    }
+    return classes;
+  }, [isScrollUp]);
   return (
-    <header className={styles.headerContainer}>
+    <header className={headerClassesName.join(" ")}>
       <div className={styles.searchIcon}>
         <MagnifyingGlassIcon width="24" height="24" />
       </div>
