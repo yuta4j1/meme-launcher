@@ -5,6 +5,7 @@
     color: #fff;
     background: #202439;
     height: 600px;
+    max-width: 90%;
     border: 1px solid #45464F;
     inset: 0;
     margin: auto;
@@ -32,12 +33,12 @@
     padding: 16px 0;
 }
 
-.iconH3 {
+.h3WithIcon {
     display: flex;
     align-items: center;
 }
 
-.iconH3 svg {
+.h3WithIcon svg {
     margin-right: 4px;
 }
 

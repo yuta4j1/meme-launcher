@@ -158,7 +158,7 @@ export const UploadModal: FC<{ open: boolean; onClose: () => void }> = ({
             </div>
             <div>
               <section>
-                <h3 className={styles.iconH3}>
+                <h3 className={styles.h3WithIcon}>
                   <HiOutlineFaceSmile size={24} />
                   画像に合う絵文字を選択
                 </h3>
@@ -171,7 +171,7 @@ export const UploadModal: FC<{ open: boolean; onClose: () => void }> = ({
               </section>
               <div style={{ height: "32px" }}></div>
               <section>
-                <h3 className={styles.iconH3}>
+                <h3 className={styles.h3WithIcon}>
                   <HiOutlineTag size={24} />
                   設定したいタグを入力
                 </h3>
