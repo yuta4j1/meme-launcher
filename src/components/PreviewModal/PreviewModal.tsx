@@ -1,6 +1,7 @@
 import { type FC, useState, useEffect } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
 import * as Tooltip from "@radix-ui/react-tooltip";
+import { Cross1Icon } from "@radix-ui/react-icons";
 import styles from "./PreviewModal.module.css";
 
 type PreviewImage = {
@@ -34,6 +35,9 @@ export const PreviewModal: FC<{
           }}
         >
           <TagList tagList={previewImage.tagList} />
+          <button className={styles.previewModalCloseButton} onClick={onClose}>
+            <Cross1Icon width={40} height={40} />
+          </button>
         </Dialog.Content>
       </Dialog.Portal>
     </Dialog.Root>

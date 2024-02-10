@@ -22,11 +22,20 @@
     opacity: 0.8;
 }
 
+.previewModalCloseButton {
+    position: absolute;
+    top: 0px;
+    left: 105%;
+    border: none;
+    background: transparent;
+    color: #696868;
+}
+
 .tagList {
     position: absolute;
     top: -32px;
     left: 0;
-    z-index: 4;
+    z-index: auto;
     display: flex;
     gap: 8px;
 }
@@ -39,6 +48,10 @@
     font-size: 0.8rem;
     border: 1px solid #828283;
     outline: none;
+}
+
+.tagButton:hover {
+    border-color: #396cd8;
 }
 
 .tooltipContent {
