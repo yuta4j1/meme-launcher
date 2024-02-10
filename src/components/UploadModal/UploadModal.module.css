@@ -4,11 +4,17 @@
     border-radius: 8px;
     color: #fff;
     background: #202439;
-    width: 600px;
-    height: 800px;
+    height: 600px;
     border: 1px solid #45464F;
     inset: 0;
     margin: auto;
+}
+
+.modalDescription {
+    font-size: 0.8rem;
+    padding: 8px 16px;
+    border-radius: 8px;
+    background-color: #000212;
 }
 
 .modalOverlay {
@@ -24,6 +30,15 @@
 
 .uploadContainer {
     padding: 16px 0;
+}
+
+.iconH3 {
+    display: flex;
+    align-items: center;
+}
+
+.iconH3 svg {
+    margin-right: 4px;
 }
 
 .droppableArea {
@@ -66,7 +81,7 @@
 
 .modalFooterButtonContainer {
     display: flex;
-    gap: 16px;
+    gap: 48px;
 }
 
 .modalButton {
@@ -116,8 +131,10 @@
 }
 
 .scrollabelArea {
+    display: grid;
+    grid-template: auto / 1fr 1fr;
+    gap: 24px;
     padding: 0px 32px;
-    max-height: 500px;
     overflow-y: auto;
 }
 

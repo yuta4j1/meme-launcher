@@ -11,6 +11,7 @@ import CategorySelector from "../CategorySelector";
 import { keywordIdGen } from "../../util/random";
 import { IoCloudUploadOutline } from "react-icons/io5";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
+import { HiOutlineFaceSmile, HiOutlineTag } from "react-icons/hi2";
 import { RxCross1 } from "react-icons/rx";
 import { FiPlus } from "react-icons/fi";
 import { ImageIcon } from "@radix-ui/react-icons";
@@ -65,7 +66,7 @@ export const UploadModal: FC<{ open: boolean; onClose: () => void }> = ({
         const bucketKey = await createBlobMd5(uploadFile);
         const imageUrl = await putObject(bucketKey, uploadFile);
 
-        const res = await postRequest<CreateImageParam, {}>("/images", {
+        await postRequest<CreateImageParam, {}>("/images", {
           imageUrl,
           categoryId: Number(selectedCategoryId),
           tagList: keywords
@@ -73,7 +74,6 @@ export const UploadModal: FC<{ open: boolean; onClose: () => void }> = ({
             .filter((it) => it !== ""),
         });
         mutate();
-        console.log(res);
         initializeState();
         onClose();
         dispatchNotifierState({
@@ -104,7 +104,9 @@ export const UploadModal: FC<{ open: boolean; onClose: () => void }> = ({
           <div className={styles.modalHeader}>
             <Dialog.Title>画像を追加する</Dialog.Title>
             <Dialog.Description>
-              あなたの素敵なミーム画像を追加しましょう！
+              <span className={styles.modalDescription}>
+                {"😸 > あなたの素敵なミーム画像を追加しましょう！"}
+              </span>
             </Dialog.Description>
           </div>
           <input
@@ -154,58 +156,68 @@ export const UploadModal: FC<{ open: boolean; onClose: () => void }> = ({
                 )}
               </div>
             </div>
-            <section>
-              <h2>画像に合う絵文字を選択</h2>
-              <div>
-                <CategorySelector
-                  categoryId={selectedCategoryId}
-                  changeHandler={(v) => setSelectedCategoryId(v)}
-                />
-              </div>
-            </section>
-            <div style={{ height: "32px" }}></div>
-            <section>
-              <h2>追加したいタグを入力</h2>
-              <div className={styles.keywordInputContainer}>
-                {keywords.map((v) => (
-                  <div className={styles.inputRow}>
-                    <KeywordInput
-                      key={v.id}
-                      value={v.value}
-                      handleChange={(s: string) =>
-                        setKeywords((prev) =>
-                          prev.map((vv) =>
-                            vv.id === v.id ? { id: vv.id, value: s } : vv
+            <div>
+              <section>
+                <h3 className={styles.iconH3}>
+                  <HiOutlineFaceSmile size={24} />
+                  画像に合う絵文字を選択
+                </h3>
+                <div>
+                  <CategorySelector
+                    categoryId={selectedCategoryId}
+                    changeHandler={(v) => setSelectedCategoryId(v)}
+                  />
+                </div>
+              </section>
+              <div style={{ height: "32px" }}></div>
+              <section>
+                <h3 className={styles.iconH3}>
+                  <HiOutlineTag size={24} />
+                  設定したいタグを入力
+                </h3>
+                <div className={styles.keywordInputContainer}>
+                  {keywords.map((v) => (
+                    <div className={styles.inputRow}>
+                      <KeywordInput
+                        key={v.id}
+                        value={v.value}
+                        handleChange={(s: string) =>
+                          setKeywords((prev) =>
+                            prev.map((vv) =>
+                              vv.id === v.id ? { id: vv.id, value: s } : vv
+                            )
                           )
-                        )
-                      }
-                    />
-                    <button
-                      className={styles.deleteRowButton}
-                      onClick={() =>
-                        setKeywords((prev) => prev.filter((p) => p.id !== v.id))
-                      }
-                    >
-                      <RxCross1 />
-                    </button>
-                  </div>
-                ))}
-              </div>
-              <div className={styles.plusButtonContainer}>
-                <button
-                  className={styles.plusButton}
-                  onClick={() =>
-                    setKeywords((prev) => [
-                      ...prev,
-                      { id: keywordIdGen(), value: "" },
-                    ])
-                  }
-                >
-                  <FiPlus size={16} />
-                  <span className={styles.plusButtonText}>タグを増やす</span>
-                </button>
-              </div>
-            </section>
+                        }
+                      />
+                      <button
+                        className={styles.deleteRowButton}
+                        onClick={() =>
+                          setKeywords((prev) =>
+                            prev.filter((p) => p.id !== v.id)
+                          )
+                        }
+                      >
+                        <RxCross1 />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+                <div className={styles.plusButtonContainer}>
+                  <button
+                    className={styles.plusButton}
+                    onClick={() =>
+                      setKeywords((prev) => [
+                        ...prev,
+                        { id: keywordIdGen(), value: "" },
+                      ])
+                    }
+                  >
+                    <FiPlus size={16} />
+                    <span className={styles.plusButtonText}>タグを追加</span>
+                  </button>
+                </div>
+              </section>
+            </div>
           </div>
           <div style={{ height: "16px" }}></div>
           <div className={styles.modalFooter}>
