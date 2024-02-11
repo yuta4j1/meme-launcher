@@ -17,7 +17,7 @@
 body {
   min-height: 100vh;
   margin: 0;
-  background: linear-gradient(-4deg, rgba(0, 2, 18, 1) 0%, rgba(32, 36, 57, 1) 50%, rgba(69, 70, 79, 1) 100%);
+  background: #2c283a;
 }
 
 .row {
