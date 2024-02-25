@@ -1,4 +1,6 @@
 import { type FC, useState, useEffect } from "react";
+import { fetch, ResponseType } from "@tauri-apps/api/http";
+import clipboard from "tauri-plugin-clipboard-api";
 import * as Dialog from "@radix-ui/react-dialog";
 import * as Tooltip from "@radix-ui/react-tooltip";
 import { Cross1Icon } from "@radix-ui/react-icons";
@@ -16,6 +18,19 @@ export const PreviewModal: FC<{
   onClose: () => void;
   previewImage: PreviewImage;
 }> = ({ open, onClose, previewImage }) => {
+  const handleCopyButtonClick = async () => {
+    const response = await fetch<Uint8Array>(previewImage.imageUrl, {
+      method: "GET",
+      responseType: ResponseType.Binary,
+    });
+    try {
+      await clipboard.writeImageBinary(Array.from(response.data));
+      console.log("copied!");
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   return (
     <Dialog.Root
       open={open}
@@ -34,6 +49,12 @@ export const PreviewModal: FC<{
             backgroundPosition: "center",
           }}
         >
+          <button
+            className={styles.copyButton}
+            onClick={() => {
+              handleCopyButtonClick();
+            }}
+          ></button>
           <TagList tagList={previewImage.tagList} />
           <button className={styles.previewModalCloseButton} onClick={onClose}>
             <Cross1Icon width={40} height={40} />
@@ -60,7 +81,7 @@ const Tag: FC<{ tag: string }> = ({ tag }) => {
   const [showTooltip, setShowTooltip] = useState(false);
 
   useEffect(() => {
-    let timer: number;
+    let timer: NodeJS.Timeout;
     if (showTooltip) {
       timer = setTimeout(() => {
         setShowTooltip(false);
@@ -77,7 +98,7 @@ const Tag: FC<{ tag: string }> = ({ tag }) => {
         <button
           className={styles.tagButton}
           onClick={() => {
-            copyToClipboard(tag);
+            clipboard.writeText(tag);
             setShowTooltip(true);
           }}
         >
@@ -93,15 +114,3 @@ const Tag: FC<{ tag: string }> = ({ tag }) => {
     </Tooltip.Root>
   );
 };
-
-async function copyToClipboard(text: string): Promise<void> {
-  const type = "text/plain";
-  const blob = new Blob([text], { type });
-  const data = [new ClipboardItem({ [type]: blob })];
-  try {
-    await navigator.clipboard.write(data);
-    // clipboard成功の処理書く
-  } catch (err) {
-    console.error(err);
-  }
-}
