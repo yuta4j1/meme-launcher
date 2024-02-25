@@ -40,6 +40,9 @@ dependencies:
   swr:
     specifier: ^2.2.4
     version: 2.2.4(react@18.2.0)
+  tauri-plugin-clipboard-api:
+    specifier: ^0.6.0
+    version: 0.6.0
 
 devDependencies:
   '@storybook/addon-essentials':
@@ -8907,6 +8910,14 @@ packages:
       yallist: 4.0.0
     dev: true
 
+  /tauri-plugin-clipboard-api@0.6.0:
+    resolution: {integrity: sha512-8HNkCo+tPiY1sPKrlTkFexUlK/F2m0srUFnPyoL7VdD8BUQniT/0D9FBrm6VsczpLRy6YjD/EezbfN02Lq8PeQ==}
+    dependencies:
+      '@tauri-apps/api': 1.5.2
+      tslib: 2.6.2
+      zod: 3.22.4
+    dev: false
+
   /telejson@7.2.0:
     resolution: {integrity: sha512-1QTEcJkJEhc8OnStBx/ILRu5J2p0GjvWsBx56bmZRqnrkdBMUe+nX92jxV+p3dB4CP6PZCdJMQJwCggkNBMzkQ==}
     dependencies:
@@ -9443,3 +9454,7 @@ packages:
     resolution: {integrity: sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==}
     engines: {node: '>=10'}
     dev: true
+
+  /zod@3.22.4:
+    resolution: {integrity: sha512-iC+8Io04lddc+mVqQ9AZ7OQ2MrUKGN+oIQyq1vemgt46jwCwLfhq7/pwnBnNXXXZb8VTVLKwp9EDkx+ryxIWmg==}
+    dev: false
