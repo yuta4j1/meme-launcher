@@ -1,11 +1,4 @@
-import {
-  FC,
-  useState,
-  useRef,
-  useMemo,
-  useCallback,
-  MouseEventHandler,
-} from "react";
+import { FC, useRef, useMemo } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
 import CategorySelector from "../CategorySelector";
 import { keywordIdGen } from "../../util/random";
@@ -16,251 +9,265 @@ import { RxCross1 } from "react-icons/rx";
 import { FiPlus } from "react-icons/fi";
 import { ImageIcon } from "@radix-ui/react-icons";
 import { putObject } from "../../r2";
-import { createBlobMd5 } from "../../util/md5";
 import { postRequest } from "../../api";
 import { useImageList } from "../../hooks/useImageList";
 import { useDispatchNotifierState } from "../../hooks/useDispatchNotifierState";
+import { useForm, useFieldArray, SubmitHandler } from "react-hook-form";
+import { valibotResolver } from "@hookform/resolvers/valibot";
+import { uploadFileSchema, UploadFileForm } from "./formSchema";
 import type { CreateImageParam } from "../../types/image";
 import styles from "./UploadModal.module.css";
-
-type Keyword = {
-  id: string;
-  value: string;
-};
-
-type CategoryId = string;
 
 export const UploadModal: FC<{ open: boolean; onClose: () => void }> = ({
   open,
   onClose,
 }) => {
-  const [uploadFile, setUploadFile] = useState<File | null>(null);
+  const {
+    register,
+    control,
+    watch,
+    setValue,
+    handleSubmit,
+    reset,
+    formState: { isSubmitting, isValid, errors },
+  } = useForm<UploadFileForm>({
+    defaultValues: {
+      file: undefined,
+      categoryId: "",
+      keywords: [{ id: keywordIdGen(), value: "" }],
+    },
+    resolver: valibotResolver(uploadFileSchema),
+    mode: "all",
+  });
+
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: "keywords",
+  });
+
+  const file = watch("file");
   const fileRef = useRef<HTMLInputElement | null>(null);
-  const [keywords, setKeywords] = useState<Keyword[]>([
-    { id: keywordIdGen(), value: "" },
-  ]);
-  const [selectedCategoryId, setSelectedCategoryId] = useState<CategoryId>("");
-  const [isUploading, setIsUploading] = useState(false);
 
   const { mutate } = useImageList();
   const dispatchNotifierState = useDispatchNotifierState();
 
-  const initializeState = useCallback(() => {
-    setUploadFile(null);
-    setKeywords([{ id: keywordIdGen(), value: "" }]);
-    setSelectedCategoryId("");
-  }, [setUploadFile, setKeywords, setSelectedCategoryId]);
+  const onSubmit: SubmitHandler<UploadFileForm> = async (data) => {
+    if (!isValid) {
+      return;
+    }
+    try {
+      const imageUrl = await putObject(data.file);
+      await postRequest<CreateImageParam, {}>("/images", {
+        imageUrl,
+        categoryId: Number(data.categoryId),
+        tagList: data.keywords.map((it) => it.value),
+      });
+      mutate();
+      onClose();
+      dispatchNotifierState({
+        show: true,
+        type: "success",
+        message: "画像のアップロードが完了しました",
+      });
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
-  const uploadFileUrl = useMemo(() => {
-    if (!uploadFile) return null;
-    return URL.createObjectURL(uploadFile);
-  }, [uploadFile]);
-
-  const onUploadClick: MouseEventHandler<HTMLButtonElement> = useCallback(
-    // TODO: 登録後UIインタラクション
-    async () => {
-      // TODO: validation
-      if (uploadFile === null) return;
-      setIsUploading(true);
-      try {
-        const bucketKey = await createBlobMd5(uploadFile);
-        const imageUrl = await putObject(bucketKey, uploadFile);
-
-        await postRequest<CreateImageParam, {}>("/images", {
-          imageUrl,
-          categoryId: Number(selectedCategoryId),
-          tagList: keywords
-            .map((keyword) => keyword.value)
-            .filter((it) => it !== ""),
-        });
-        mutate();
-        initializeState();
-        onClose();
-        dispatchNotifierState({
-          show: true,
-          type: "success",
-          message: "画像のアップロードが完了しました",
-        });
-      } catch (e) {
-        console.error(e);
-      }
-      setIsUploading(false);
-    },
-    [uploadFile, selectedCategoryId, keywords, onClose]
-  );
+  const objectUrl = useMemo(() => {
+    return file === undefined ? undefined : URL.createObjectURL(file);
+  }, [file]);
 
   return (
     <Dialog.Root
       open={open}
       onOpenChange={() => {
         // ステートの初期化
-        initializeState();
+        reset();
+        if (objectUrl !== undefined) {
+          URL.revokeObjectURL(objectUrl);
+        }
         onClose();
       }}
     >
       <Dialog.Portal>
         <Dialog.Overlay className={styles.modalOverlay} />
         <Dialog.Content className={styles.modalContent}>
-          <div className={styles.modalHeader}>
-            <Dialog.Title>画像を追加する</Dialog.Title>
-            <Dialog.Description>
-              <span className={styles.modalDescription}>
-                {"😸 > あなたの素敵なミーム画像を追加しましょう！"}
-              </span>
-            </Dialog.Description>
-          </div>
-          <input
-            type="file"
-            style={{ display: "none" }}
-            accept="image/png,image/jpeg"
-            ref={fileRef}
-            onChange={(e) => {
-              const files = e.target.files;
-              if (files && files?.length > 0) {
-                setUploadFile(files.item(0));
-              }
-            }}
-          />
-          <div className={styles.scrollabelArea}>
-            <div className={styles.uploadContainer}>
-              <div
-                className={styles.droppableArea}
-                onDragOver={(e) => {
-                  e.preventDefault();
-                }}
-                onDrop={(e) => {
-                  e.preventDefault();
-                  const files = e.dataTransfer.files;
-                  setUploadFile(files.item(0));
-                }}
-                onClick={() => {
-                  /** TODO: a11y check */
-                  fileRef.current?.click();
-                }}
-              >
-                {uploadFile === null && (
-                  <div className={styles.fileInputMessage}>
-                    <ImageIcon />
-                    <span className={styles.fileInputMessageText}>
-                      ファイルをドラッグ&ドロップしてください
-                    </span>
-                  </div>
-                )}
-                {uploadFile !== null && uploadFileUrl !== null && (
-                  <img
-                    className={styles.droppedImage}
-                    src={uploadFileUrl}
-                    width="500"
-                    height="300"
-                  />
-                )}
-              </div>
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <div className={styles.modalHeader}>
+              <Dialog.Title>画像を追加する</Dialog.Title>
+              <Dialog.Description>
+                <span className={styles.modalDescription}>
+                  {"😸 > あなたの素敵なミーム画像をアップロードしましょう！"}
+                </span>
+              </Dialog.Description>
             </div>
-            <div>
-              <section>
-                <h3 className={styles.h3WithIcon}>
-                  <HiOutlineFaceSmile size={24} />
-                  画像に合う絵文字を選択
-                </h3>
-                <div>
-                  <CategorySelector
-                    categoryId={selectedCategoryId}
-                    changeHandler={(v) => setSelectedCategoryId(v)}
-                  />
+            <div className={styles.formContent}>
+              <div className={styles.leftContent}>
+                <input
+                  type="file"
+                  style={{ display: "none" }}
+                  accept="image/png,image/jpeg"
+                  onChange={(e) => {
+                    const files = e.target.files;
+                    if (files && files.length > 0) {
+                      const file = files.item(0);
+                      if (file !== null) {
+                        setValue("file", file);
+                      }
+                    }
+                  }}
+                  ref={fileRef}
+                />
+                <div className={styles.uploadContainer}>
+                  <div
+                    className={styles.droppableArea}
+                    onDragOver={(e) => {
+                      e.preventDefault();
+                    }}
+                    onDrop={(e) => {
+                      e.preventDefault();
+                      // const files = e.dataTransfer.files;
+                      // field.handleChange(files.item(0));
+                    }}
+                    onClick={() => {
+                      /** TODO: a11y check */
+                      fileRef.current?.click();
+                    }}
+                  >
+                    {file === undefined && (
+                      <div className={styles.fileInputMessage}>
+                        <ImageIcon />
+                        <span className={styles.fileInputMessageText}>
+                          ファイルをドラッグ&ドロップしてください
+                        </span>
+                      </div>
+                    )}
+                    {file !== undefined && (
+                      <div className={styles.previewImageContainer}>
+                        <button
+                          className={styles.deletePreviewImage}
+                          onClick={(e) => {
+                            e.preventDefault();
+                            setValue("file", undefined as unknown as Blob);
+                            if (objectUrl !== undefined) {
+                              URL.revokeObjectURL(objectUrl);
+                            }
+                          }}
+                        >
+                          <RxCross1 />
+                        </button>
+                        <img
+                          className={styles.previewImage}
+                          src={objectUrl}
+                          width="100%"
+                          height="300"
+                        />
+                      </div>
+                    )}
+                  </div>
+                  {errors.file && (
+                    <p className={styles.errorMessage}>{errors.file.message}</p>
+                  )}
                 </div>
-              </section>
-              <div style={{ height: "32px" }}></div>
-              <section>
-                <h3 className={styles.h3WithIcon}>
-                  <HiOutlineTag size={24} />
-                  設定したいタグを入力
-                </h3>
-                <div className={styles.keywordInputContainer}>
-                  {keywords.map((v) => (
-                    <div className={styles.inputRow}>
-                      <KeywordInput
-                        key={v.id}
-                        value={v.value}
-                        handleChange={(s: string) =>
-                          setKeywords((prev) =>
-                            prev.map((vv) =>
-                              vv.id === v.id ? { id: vv.id, value: s } : vv
-                            )
-                          )
-                        }
-                      />
+              </div>
+              <div className={styles.rightContent}>
+                <section>
+                  <h3 className={styles.h3WithIcon}>
+                    <HiOutlineFaceSmile size={24} />
+                    画像に合う絵文字を選択
+                  </h3>
+                  <div>
+                    <CategorySelector control={control} />
+                    {errors.categoryId && (
+                      <p className={styles.errorMessage}>
+                        {errors.categoryId?.message}
+                      </p>
+                    )}
+                  </div>
+                </section>
+                <div style={{ height: "32px" }}></div>
+                <section>
+                  <h3 className={styles.h3WithIcon}>
+                    <HiOutlineTag size={24} />
+                    設定したいタグを入力
+                  </h3>
+                  <div className={styles.keywordInputContainer}>
+                    <div className={styles.inputRowsContainer}>
+                      {fields.map((field, idx) => (
+                        <div>
+                          <div className={styles.inputRow} key={field.id}>
+                            <input
+                              type="text"
+                              className={styles.keywordInput}
+                              {...register(`keywords.${idx}.value`)}
+                            />
+
+                            <button
+                              className={styles.deleteRowButton}
+                              onClick={(e) => {
+                                e.preventDefault();
+                                remove(idx);
+                              }}
+                            >
+                              <RxCross1 />
+                            </button>
+                          </div>
+                          {errors.keywords && errors.keywords[idx] && (
+                            <p className={styles.errorMessage}>
+                              {errors.keywords[idx]?.value?.message}
+                            </p>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                    <div className={styles.plusButtonContainer}>
                       <button
-                        className={styles.deleteRowButton}
-                        onClick={() =>
-                          setKeywords((prev) =>
-                            prev.filter((p) => p.id !== v.id)
-                          )
-                        }
+                        className={styles.plusButton}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          append({ id: keywordIdGen(), value: "" });
+                        }}
                       >
-                        <RxCross1 />
+                        <FiPlus size={16} />
+                        <span className={styles.plusButtonText}>
+                          タグを追加
+                        </span>
                       </button>
                     </div>
-                  ))}
-                </div>
-                <div className={styles.plusButtonContainer}>
-                  <button
-                    className={styles.plusButton}
-                    onClick={() =>
-                      setKeywords((prev) => [
-                        ...prev,
-                        { id: keywordIdGen(), value: "" },
-                      ])
-                    }
-                  >
-                    <FiPlus size={16} />
-                    <span className={styles.plusButtonText}>タグを追加</span>
-                  </button>
-                </div>
-              </section>
-            </div>
-          </div>
-          <div style={{ height: "16px" }}></div>
-          <div className={styles.modalFooter}>
-            <div className={styles.modalFooterButtonContainer}>
-              <Dialog.Close asChild>
-                <button
-                  className={`${styles.modalButton} ${styles.cancelButton}`}
-                >
-                  キャンセル
-                </button>
-              </Dialog.Close>
-              <button
-                className={`${styles.modalButton} ${styles.uploadButton}`}
-                onClick={onUploadClick}
-                disabled={isUploading}
-              >
-                {isUploading ? (
-                  <div className={styles.loader}>
-                    <AiOutlineLoading3Quarters />
                   </div>
-                ) : (
-                  <IoCloudUploadOutline />
-                )}
-                <span className={styles.uploadButtonText}>アップロード</span>
-              </button>
+                </section>
+              </div>
             </div>
-          </div>
+            <div style={{ height: "16px" }}></div>
+            <div className={styles.modalFooter}>
+              <div className={styles.modalFooterButtonContainer}>
+                <Dialog.Close asChild>
+                  <button
+                    type="button"
+                    className={`${styles.modalButton} ${styles.cancelButton}`}
+                  >
+                    キャンセル
+                  </button>
+                </Dialog.Close>
+                <button
+                  className={`${styles.modalButton} ${styles.uploadButton}`}
+                  disabled={false}
+                >
+                  {isSubmitting ? (
+                    <div className={styles.loader}>
+                      <AiOutlineLoading3Quarters />
+                    </div>
+                  ) : (
+                    <IoCloudUploadOutline />
+                  )}
+                  <span className={styles.uploadButtonText}>アップロード</span>
+                </button>
+              </div>
+            </div>
+          </form>
         </Dialog.Content>
       </Dialog.Portal>
     </Dialog.Root>
-  );
-};
-
-const KeywordInput: FC<{
-  value: string;
-  handleChange: (v: string) => void;
-}> = ({ value, handleChange }) => {
-  return (
-    <input
-      type="text"
-      className={styles.keywordInput}
-      value={value}
-      onChange={(e) => handleChange(e.currentTarget.value)}
-    />
   );
 };
