@@ -1,4 +1,5 @@
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
+import { md5 } from "js-md5";
 
 const S3 = new S3Client({
   region: "auto",
@@ -11,10 +12,8 @@ const S3 = new S3Client({
   },
 });
 
-export const putObject = async (
-  bucketKey: string,
-  file: Blob
-): Promise<string> => {
+export const putObject = async (file: Blob): Promise<string> => {
+  const bucketKey = await createBlobMd5(file);
   const command = new PutObjectCommand({
     Key: bucketKey,
     Bucket: "meme-bucket",
@@ -25,3 +24,7 @@ export const putObject = async (
   await S3.send(command);
   return import.meta.env.VITE_BUCKET_BASE_URL + bucketKey;
 };
+
+async function createBlobMd5(src: Blob): Promise<string> {
+  return md5(await src.arrayBuffer());
+}
