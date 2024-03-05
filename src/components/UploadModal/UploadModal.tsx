@@ -8,7 +8,7 @@ import { HiOutlineFaceSmile, HiOutlineTag } from "react-icons/hi2";
 import { RxCross1 } from "react-icons/rx";
 import { FiPlus } from "react-icons/fi";
 import { ImageIcon } from "@radix-ui/react-icons";
-import { putObject } from "../../r2";
+import { putObject } from "../../storage/client";
 import { postRequest } from "../../api";
 import { useImageList } from "../../hooks/useImageList";
 import { useDispatchNotifierState } from "../../hooks/useDispatchNotifierState";
