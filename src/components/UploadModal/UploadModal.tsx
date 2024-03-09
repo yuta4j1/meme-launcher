@@ -2,6 +2,7 @@ import { FC, useRef, useMemo } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
 import CategorySelector from "../CategorySelector";
 import { keywordIdGen } from "../../util/random";
+import { cx } from "../../util/classNames";
 import { IoCloudUploadOutline } from "react-icons/io5";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { HiOutlineFaceSmile, HiOutlineTag } from "react-icons/hi2";
@@ -67,6 +68,7 @@ export const UploadModal: FC<{ open: boolean; onClose: () => void }> = ({
       dispatchNotifierState({
         show: true,
         type: "success",
+        color: "#5cb85c",
         message: "画像のアップロードが完了しました",
       });
     } catch (err) {
@@ -92,7 +94,9 @@ export const UploadModal: FC<{ open: boolean; onClose: () => void }> = ({
     >
       <Dialog.Portal>
         <Dialog.Overlay className={styles.modalOverlay} />
-        <Dialog.Content className={styles.modalContent}>
+        <Dialog.Content
+          className={cx(styles.modalContent, styles.modalContentHeight)}
+        >
           <form onSubmit={handleSubmit(onSubmit)}>
             <div className={styles.modalHeader}>
               <Dialog.Title>画像を追加する</Dialog.Title>
@@ -120,27 +124,19 @@ export const UploadModal: FC<{ open: boolean; onClose: () => void }> = ({
                   ref={fileRef}
                 />
                 <div className={styles.uploadContainer}>
-                  <div
-                    className={styles.droppableArea}
-                    onDragOver={(e) => {
-                      e.preventDefault();
-                    }}
-                    onDrop={(e) => {
-                      e.preventDefault();
-                      // const files = e.dataTransfer.files;
-                      // field.handleChange(files.item(0));
-                    }}
-                    onClick={() => {
-                      /** TODO: a11y check */
-                      fileRef.current?.click();
-                    }}
-                  >
+                  <div className={styles.droppableArea}>
                     {file === undefined && (
                       <div className={styles.fileInputMessage}>
                         <ImageIcon />
-                        <span className={styles.fileInputMessageText}>
-                          ファイルをドラッグ&ドロップしてください
-                        </span>
+                        <button
+                          type="button"
+                          className={styles.fileInputAreaButton}
+                          onClick={() => {
+                            fileRef.current?.click();
+                          }}
+                        >
+                          このあたりをクリックしてファイルを選択してください
+                        </button>
                       </div>
                     )}
                     {file !== undefined && (
@@ -245,13 +241,13 @@ export const UploadModal: FC<{ open: boolean; onClose: () => void }> = ({
                 <Dialog.Close asChild>
                   <button
                     type="button"
-                    className={`${styles.modalButton} ${styles.cancelButton}`}
+                    className={cx(styles.modalButton, styles.cancelButton)}
                   >
                     キャンセル
                   </button>
                 </Dialog.Close>
                 <button
-                  className={`${styles.modalButton} ${styles.uploadButton}`}
+                  className={cx(styles.modalButton, styles.uploadButton)}
                   disabled={false}
                 >
                   {isSubmitting ? (
