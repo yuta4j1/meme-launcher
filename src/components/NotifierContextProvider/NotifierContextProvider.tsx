@@ -5,20 +5,8 @@ import {
   useRef,
   createContext,
 } from "react";
-import * as Toast from "@radix-ui/react-toast";
-import styles from "./NotifierContextProvider.module.css";
-
-type NotifierStateType = "success" | "error";
-
-type NotifierState =
-  | {
-      show: true;
-      message: string;
-      type: NotifierStateType;
-    }
-  | {
-      show: false;
-    };
+import NotifierToaster from "./NotifierToaster";
+import type { NotifierState } from "./types";
 
 export const DispatchNotifierStateContext = createContext<
   (state: NotifierState) => void
@@ -40,36 +28,20 @@ export const NotifierContextProvider: FC<{ children: ReactNode }> = ({
     }, 100);
   };
 
+  const handleOpenChange = (open: boolean) => {
+    if (!open) {
+      setNotifierState({ show: false });
+    }
+  };
+
   return (
-    <Toast.Provider>
-      <DispatchNotifierStateContext.Provider value={handleSetNotifierState}>
-        {children}
-      </DispatchNotifierStateContext.Provider>
-      <Toast.Root
-        className={styles.ToastRoot}
-        open={notifierState.show}
-        onOpenChange={(open: boolean) => {
-          if (!open) {
-            setNotifierState({ show: false });
-          }
-        }}
-      >
-        <Toast.Title className={styles.ToastTitle}>
-          <div className={styles.TitleIcon}>🎉</div>
-          <span className={styles.TitleText}>
-            {notifierState.show ? notifierState.message : ""}
-          </span>
-        </Toast.Title>
-        {/* <Toast.Action
-          className="ToastAction"
-          asChild
-          altText="Goto schedule to undo"
-        >
-          <button className="Button small green">Undo</button>
-        </Toast.Action> */}
-      </Toast.Root>
-      <Toast.Viewport className={styles.ToastViewport} />
-    </Toast.Provider>
+    <DispatchNotifierStateContext.Provider value={handleSetNotifierState}>
+      {children}
+      <NotifierToaster
+        state={notifierState}
+        handleOpenChange={handleOpenChange}
+      />
+    </DispatchNotifierStateContext.Provider>
   );
 };
 
