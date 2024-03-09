@@ -1,8 +1,10 @@
-import { type FC, useState, useEffect } from "react";
+import { FC, useState, useEffect } from "react";
 import { fetch, ResponseType } from "@tauri-apps/api/http";
 import clipboard from "tauri-plugin-clipboard-api";
 import * as Dialog from "@radix-ui/react-dialog";
 import * as Tooltip from "@radix-ui/react-tooltip";
+import { CopyLoader } from "./CopyLoader";
+import { CopyCompleted } from "./CopyCompleted";
 import { Cross1Icon } from "@radix-ui/react-icons";
 import styles from "./PreviewModal.module.css";
 
@@ -18,16 +20,39 @@ export const PreviewModal: FC<{
   onClose: () => void;
   previewImage: PreviewImage;
 }> = ({ open, onClose, previewImage }) => {
+  const [isCopying, setIsCopying] = useState(false);
+  // hooks化しても良いかも
+  const [isDoneCopy, setIsDoneCopy] = useState(false);
+
+  useEffect(() => {
+    if (!isDoneCopy) {
+      return;
+    }
+    let timer: ReturnType<typeof setTimeout>;
+    if (isDoneCopy) {
+      timer = setTimeout(() => {
+        setIsDoneCopy(false);
+      }, 2000);
+    }
+
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [isDoneCopy, setIsDoneCopy]);
+
   const handleCopyButtonClick = async () => {
+    setIsCopying(true);
     const response = await fetch<Uint8Array>(previewImage.imageUrl, {
       method: "GET",
       responseType: ResponseType.Binary,
     });
     try {
       await clipboard.writeImageBinary(Array.from(response.data));
-      console.log("copied!");
+      setIsDoneCopy(true);
     } catch (err) {
       console.error(err);
+    } finally {
+      setIsCopying(false);
     }
   };
 
@@ -49,12 +74,25 @@ export const PreviewModal: FC<{
             backgroundPosition: "center",
           }}
         >
-          <button
-            className={styles.copyButton}
-            onClick={() => {
-              handleCopyButtonClick();
-            }}
-          ></button>
+          <div className={styles.modalContentContainer}>
+            {isCopying && (
+              <div className={styles.interactionWrapper}>
+                <CopyLoader />
+              </div>
+            )}
+            {isDoneCopy && (
+              <>
+                <div className={styles.interactionWrapper}></div>
+                <CopyCompleted />
+              </>
+            )}
+            <button
+              className={styles.copyButton}
+              onClick={() => {
+                handleCopyButtonClick();
+              }}
+            ></button>
+          </div>
           <TagList tagList={previewImage.tagList} />
           <button className={styles.previewModalCloseButton} onClick={onClose}>
             <Cross1Icon width={40} height={40} />
