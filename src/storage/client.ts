@@ -13,18 +13,18 @@ const S3 = new S3Client({
 });
 
 export const putObject = async (file: Blob): Promise<string> => {
-  const bucketKey = await createBlobMd5(file);
+  const hash = await hashingBlob(file);
   const command = new PutObjectCommand({
-    Key: bucketKey,
+    Key: hash,
     Bucket: "meme-bucket",
     Body: file,
     ContentType: file.type,
     ACL: "public-read",
   });
   await S3.send(command);
-  return import.meta.env.VITE_BUCKET_BASE_URL + bucketKey;
+  return import.meta.env.VITE_BUCKET_BASE_URL + hash;
 };
 
-async function createBlobMd5(src: Blob): Promise<string> {
+async function hashingBlob(src: Blob): Promise<string> {
   return md5(await src.arrayBuffer());
 }

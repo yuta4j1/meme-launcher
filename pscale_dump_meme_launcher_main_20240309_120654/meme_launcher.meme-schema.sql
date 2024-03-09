@@ -1,0 +1,8 @@
+CREATE TABLE `meme` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `image_url` varchar(255) NOT NULL,
+  `category_id` int NOT NULL,
+  `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=29 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
