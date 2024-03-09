@@ -191,8 +191,8 @@ export const UploadModal: FC<{ open: boolean; onClose: () => void }> = ({
                   <div className={styles.keywordInputContainer}>
                     <div className={styles.inputRowsContainer}>
                       {fields.map((field, idx) => (
-                        <div>
-                          <div className={styles.inputRow} key={field.id}>
+                        <div key={field.id}>
+                          <div className={styles.inputRow}>
                             <input
                               type="text"
                               className={styles.keywordInput}
