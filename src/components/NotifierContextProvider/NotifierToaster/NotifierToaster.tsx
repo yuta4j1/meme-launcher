@@ -1,7 +1,7 @@
 import { FC, ReactNode } from "react";
 import * as Toast from "@radix-ui/react-toast";
 import { CheckIcon, CrossCircledIcon } from "@radix-ui/react-icons";
-import type { NotifierState, NotifierType } from "../types";
+import { NotifierState, NotifierType, notifierColor } from "../types";
 import styles from "./NotifierToaster.module.css";
 
 const toasterIconMap: { [key in NotifierType]: ReactNode } = {
@@ -20,14 +20,16 @@ export const NotifierToaster: FC<{
         open={state.show}
         onOpenChange={handleOpenChange}
         style={{
-          outline: state.show ? `1px solid ${state.color}` : "none",
+          outline: state.show
+            ? `1px solid ${notifierColor(state.type)}`
+            : "none",
         }}
       >
         <Toast.Title className={styles.ToastTitle}>
           <div
             className={styles.TitleIcon}
             style={{
-              color: state.show ? state.color : "#fff",
+              color: state.show ? notifierColor(state.type) : "#fff",
             }}
           >
             {state.show ? toasterIconMap[state.type] : null}

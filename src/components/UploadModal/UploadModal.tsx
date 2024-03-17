@@ -68,11 +68,15 @@ export const UploadModal: FC<{ open: boolean; onClose: () => void }> = ({
       dispatchNotifierState({
         show: true,
         type: "success",
-        color: "#5cb85c",
         message: "画像のアップロードが完了しました",
       });
     } catch (err) {
       console.error(err);
+      dispatchNotifierState({
+        show: true,
+        type: "error",
+        message: "画像のアップロードが完了しました",
+      });
     }
   };
 

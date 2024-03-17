@@ -21,7 +21,6 @@ export const Success: Story = {
     state: {
       type: "success",
       show: true,
-      color: "#5cb85c",
       message: "画像のアップロードが完了しました",
     },
     handleOpenChange: () => {},
@@ -33,7 +32,6 @@ export const Error: Story = {
     state: {
       type: "error",
       show: true,
-      color: "#ef5350",
       message: "画像のアップロードに失敗しました",
     },
     handleOpenChange: () => {},
