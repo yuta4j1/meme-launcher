@@ -8,7 +8,7 @@ import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { HiOutlineFaceSmile, HiOutlineTag } from "react-icons/hi2";
 import { RxCross1 } from "react-icons/rx";
 import { FiPlus } from "react-icons/fi";
-import { ImageIcon } from "@radix-ui/react-icons";
+import { ImageIcon, Cross1Icon } from "@radix-ui/react-icons";
 import { putObject } from "../../storage/client";
 import { postRequest } from "../../api";
 import { useImageList } from "../../hooks/useImageList";
@@ -84,7 +84,7 @@ export const UploadModal: FC<{ open: boolean; onClose: () => void }> = ({
     <Dialog.Root
       open={open}
       onOpenChange={() => {
-        // ステートの初期化
+        // フォームのステート初期化
         reset();
         if (objectUrl !== undefined) {
           URL.revokeObjectURL(objectUrl);
@@ -105,6 +105,14 @@ export const UploadModal: FC<{ open: boolean; onClose: () => void }> = ({
                   {"😸 > あなたの素敵なミーム画像をアップロードしましょう！"}
                 </span>
               </Dialog.Description>
+              <button
+                className={styles.modalCloseButton}
+                onClick={() => {
+                  onClose();
+                }}
+              >
+                <Cross1Icon width={24} height={24} />
+              </button>
             </div>
             <div className={styles.formContent}>
               <div className={styles.leftContent}>

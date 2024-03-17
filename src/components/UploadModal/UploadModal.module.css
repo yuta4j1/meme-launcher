@@ -142,10 +142,26 @@
 }
 
 .modalHeader {
+    position: relative;
     height: 112px;
     background-color: #11131e;
     padding: 16px 32px 0px 32px;
     margin-bottom: 8px;
+}
+
+.modalCloseButton {
+    position: absolute;
+    top: 16px;
+    left: 93%;
+    color: #646464;
+    background: transparent;
+    border-radius: 50%;
+    border: none;
+    padding: 8px;
+
+    &:hover {
+        background-color: #45444469;
+    }
 }
 
 .modalFooter {
