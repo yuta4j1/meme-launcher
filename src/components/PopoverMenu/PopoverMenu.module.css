@@ -19,10 +19,10 @@
     color: #c2c2c2;
     font-size: 0.9rem;
     border: none;
-}
 
-.uploadActionButton:hover {
-    background-color: #47464669;
+    &:hover {
+        background-color: #45444469;
+    }
 }
 
 .uploadActionButtonText {
